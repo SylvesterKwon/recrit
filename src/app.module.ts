@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { TmdbClientModule } from './tmdb-client/tmdb-client.module';
 import tmdbClientConfig from './config/tmdb-client.config';
 import { MovieModule } from './movie/movie.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MovieModule } from './movie/movie.module';
     MikroOrmModule.forRoot(),
     TmdbClientModule,
     MovieModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

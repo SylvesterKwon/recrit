@@ -10,11 +10,11 @@ export class MovieSyncApplication {
     private readonly orm: MikroORM,
     private readonly movieSyncService: MovieSyncService,
   ) {
-    // TODO: 테스트용 임시 코드, 삭제 필요
-    this.syncMovieGenres();
-    delay(1000);
-    // this.syncMovie(2);
-    this.syncAllMovies();
+    // // TODO: 테스트용 임시 코드, 삭제 필요
+    // this.syncMovieGenres();
+    // delay(1000);
+    // // this.syncMovie(2);
+    // this.syncAllMovies();
   }
 
   /**

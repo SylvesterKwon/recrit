@@ -76,24 +76,24 @@ export class Movie extends TimestampedEntity {
   @Property()
   video?: boolean;
 
-  constructor(movieData: Create<Movie>) {
+  constructor(props: Create<Movie>) {
     super();
-    this.tmdbId = movieData.tmdbId;
-    this.adult = movieData.adult;
-    this.backdropPath = movieData.backdropPath;
-    this.budget = movieData.budget;
-    this.homepage = movieData.homepage;
-    this.imdbId = movieData.imdbId;
-    this.originalLanguage = movieData.originalLanguage;
-    this.originalTitle = movieData.originalTitle;
-    this.overview = movieData.overview;
-    this.posterPath = movieData.posterPath;
-    this.releaseDate = movieData.releaseDate;
-    this.revenue = movieData.revenue;
-    this.runtime = movieData.runtime;
-    this.status = movieData.status;
-    this.tagline = movieData.tagline;
-    this.title = movieData.title;
-    this.video = movieData.video;
+    this.tmdbId = props.tmdbId;
+    this.adult = props.adult;
+    this.backdropPath = props.backdropPath;
+    this.budget = props.budget;
+    this.homepage = props.homepage;
+    this.imdbId = props.imdbId;
+    this.originalLanguage = props.originalLanguage;
+    this.originalTitle = props.originalTitle;
+    this.overview = props.overview;
+    this.posterPath = props.posterPath;
+    this.releaseDate = props.releaseDate;
+    this.revenue = props.revenue;
+    this.runtime = props.runtime;
+    this.status = props.status;
+    this.tagline = props.tagline;
+    this.title = props.title;
+    this.video = props.video;
   }
 }
