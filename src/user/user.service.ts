@@ -24,6 +24,7 @@ export class UserService {
       email: dto.email,
       username: dto.username,
       hashedPassword: hashedPassword,
+      // TODO(User): sign up 시 기본 role 설정
     });
   }
 
