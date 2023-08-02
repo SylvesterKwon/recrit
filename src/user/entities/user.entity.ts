@@ -1,7 +1,7 @@
-import { Entity, ManyToOne, Property, Unique } from '@mikro-orm/core';
+import { Entity, ManyToOne, Property, Ref, Unique } from '@mikro-orm/core';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
-import { UserRepository } from '../user.repository';
 import { Role } from './role.entity';
+import { UserRepository } from '../repositories/user.repository';
 
 @Entity({ customRepository: () => UserRepository })
 export class User extends TimestampedEntity {
@@ -16,6 +16,6 @@ export class User extends TimestampedEntity {
   @Property()
   hashedPassword: string;
 
-  @ManyToOne({ nullable: true })
-  role?: Role;
+  @ManyToOne({ nullable: true, ref: true })
+  role?: Ref<Role>;
 }

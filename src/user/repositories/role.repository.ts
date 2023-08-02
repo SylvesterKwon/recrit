@@ -1,4 +1,4 @@
 import { EntityRepository } from '@mikro-orm/mysql';
-import { Role } from './entities/role.entity';
+import { Role } from 'moviedb-promise';
 
 export class RoleRepository extends EntityRepository<Role> {}

@@ -7,9 +7,9 @@ import {
   Unique,
 } from '@mikro-orm/core';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
-import { RoleRepository } from '../role.repository';
 import { Permission } from './permission.entity';
 import { User } from './user.entity';
+import { RoleRepository } from '../repositories/role.repository';
 
 @Entity({ customRepository: () => RoleRepository })
 export class Role extends TimestampedEntity {
@@ -17,8 +17,8 @@ export class Role extends TimestampedEntity {
   @Unique()
   name: string;
 
-  @Property()
-  description: string;
+  @Property({ nullable: true })
+  description?: string;
 
   @ManyToMany({ inversedBy: 'roles' })
   permissions = new Collection<Permission>(this);

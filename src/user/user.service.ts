@@ -1,12 +1,21 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { User } from './entities/user.entity';
 import bcrypt from 'bcrypt';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './repositories/user.repository';
+import { RoleRepository } from './repositories/role.repository';
+import { PermissionRepository } from './repositories/permission.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private permissionRepository: PermissionRepository,
+  ) {}
 
   async create(dto: SignUpDto) {
     // TODO: password 복잡도 validation 및 email 형식 validation 추가
@@ -40,5 +49,22 @@ export class UserService {
 
   async checkPasswordMatches(user: User, password: string) {
     return await bcrypt.compare(password, user.hashedPassword);
+  }
+
+  async checkIfUserHasPermission(
+    user: User,
+    permissionName: string,
+  ): Promise<boolean> {
+    const role = await user.role?.load();
+    if (!role) return false; // user has no role
+    const rolePermissions = await role.permissions?.init();
+    console.log(user.role);
+    if (!rolePermissions) return false;
+    const permission = await this.permissionRepository.findByName(
+      permissionName,
+    );
+    if (!permission)
+      throw new NotFoundException(`Permission '${permissionName}'not found.`);
+    return rolePermissions.contains(permission);
   }
 }
