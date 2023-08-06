@@ -24,6 +24,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       }),
     }),
   ],
+  exports: [UserService],
   controllers: [UserController],
   providers: [
     UserApplication,

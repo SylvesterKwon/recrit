@@ -7,7 +7,6 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { User } from './entities/user.entity';
 import bcrypt from 'bcrypt';
 import { UserRepository } from './repositories/user.repository';
-import { RoleRepository } from './repositories/role.repository';
 import { PermissionRepository } from './repositories/permission.repository';
 
 @Injectable()
