@@ -7,6 +7,13 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // CORS config
+  app.enableCors({
+    origin: ['http://localhost:3001'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  });
+
   // Dayjs config
   dayjs.extend(utc);
 
