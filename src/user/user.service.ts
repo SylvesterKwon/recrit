@@ -1,14 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { User } from './entities/user.entity';
 import bcrypt from 'bcrypt';
 import { UserRepository } from './repositories/user.repository';
-import { RoleRepository } from './repositories/role.repository';
 import { PermissionRepository } from './repositories/permission.repository';
+import {
+  EmailAlreadyExistsException,
+  UsernameAlreadyExistsException,
+} from 'src/common/exceptions/user.exception';
 
 @Injectable()
 export class UserService {
@@ -22,9 +21,9 @@ export class UserService {
 
     // TODO: 유저 생성 validation 코드 복잡해지면 별도 함수로 분리
     if (await this.userRepository.findByUsername(dto.username)) {
-      throw new BadRequestException('Username already exists.');
+      throw new UsernameAlreadyExistsException();
     } else if (await this.userRepository.findByEmail(dto.email)) {
-      throw new BadRequestException('Email already exists.');
+      throw new EmailAlreadyExistsException();
     }
 
     const hashedPassword = await this.hashPassword(dto.password);

@@ -3,9 +3,13 @@ import { AppModule } from './app.module';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { BaseExceptionFilter } from './filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Filter config
+  app.useGlobalFilters(new BaseExceptionFilter());
 
   // CORS config
   app.enableCors({

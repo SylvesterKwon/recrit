@@ -2,13 +2,11 @@ import {
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '../entities/user.entity';
 import { Reflector } from '@nestjs/core';
 import { UserService } from '../user.service';
+import { UserNotFoundException } from 'src/common/exceptions/user.exception';
 
 @Injectable()
 export class PermissionGuard {
@@ -25,7 +23,7 @@ export class PermissionGuard {
       );
     const request = context.switchToHttp().getRequest();
     const user: User | undefined = request.user;
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new UserNotFoundException();
     return await this.userService.checkIfUserHasPermission(user, permission);
   }
 }

@@ -14,6 +14,7 @@ import {
   AuthenticationRequired,
   PermissionRequired,
 } from 'src/common/decorators/auth.decorator';
+import { InvalidPasswordException } from 'src/common/exceptions/user.exception';
 
 @Controller('user')
 export class UserController {
@@ -21,14 +22,14 @@ export class UserController {
 
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
-  signIn(@Request() req: Request & { user: User }) {
+  async signIn(@Request() req: Request & { user: User }) {
     // TODO: Add SignInDto class validation
     return this.userApplication.signIn(req.user);
   }
 
   @Post('sign-up')
-  signUp(@Body() signUpDto: SignUpDto) {
-    return this.userApplication.signUp(signUpDto);
+  async signUp(@Body() signUpDto: SignUpDto) {
+    return await this.userApplication.signUp(signUpDto);
   }
 
   // TODO: 로그인 확인용 임시 API, 삭제 할 것
