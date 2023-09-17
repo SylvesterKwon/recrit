@@ -14,7 +14,6 @@ import {
   AuthenticationRequired,
   PermissionRequired,
 } from 'src/common/decorators/auth.decorator';
-import { InvalidPasswordException } from 'src/common/exceptions/user.exception';
 
 @Controller('user')
 export class UserController {
