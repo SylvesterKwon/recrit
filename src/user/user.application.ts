@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
 import { UserService } from './user.service';
 import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
+import { Transactional } from 'src/common/decorators/transactional.decorator';
 
 @Injectable()
 export class UserApplication {
@@ -13,17 +14,13 @@ export class UserApplication {
     private authService: AuthService,
   ) {}
 
-  @UseRequestContext()
+  @Transactional()
   async signIn(user: User) {
-    return await this.orm.em.transactional(async () => {
-      return await this.authService.signIn(user);
-    });
+    return await this.authService.signIn(user);
   }
 
-  @UseRequestContext()
+  @Transactional()
   async signUp(signUpDto: SignUpDto) {
-    await this.orm.em.transactional(async () => {
-      await this.userService.create(signUpDto);
-    });
+    await this.userService.create(signUpDto);
   }
 }
