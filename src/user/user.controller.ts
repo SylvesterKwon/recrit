@@ -1,19 +1,12 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { UserApplication } from './user.application';
-import { User } from './entities/user.entity';
 import { LocalAuthGuard } from './guards/local-auth.guards';
 import {
   AuthenticationRequired,
   PermissionRequired,
 } from 'src/common/decorators/auth.decorator';
+import { UserId } from 'src/common/decorators/user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -21,9 +14,9 @@ export class UserController {
 
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
-  async signIn(@Request() req: Request & { user: User }) {
+  async signIn(@UserId() userId: number) {
     // TODO: Add SignInDto class validation
-    return this.userApplication.signIn(req.user);
+    return this.userApplication.signIn(userId);
   }
 
   @Post('sign-up')
@@ -34,14 +27,14 @@ export class UserController {
   // TODO: 로그인 확인용 임시 API, 삭제 할 것
   @AuthenticationRequired()
   @Get('profile')
-  getProfile(@Request() req: Request & { user: User }) {
-    return req.user;
+  getProfile(@UserId() userId: number) {
+    return userId;
   }
 
   // TODO: 권한 확인용 임시 API, 삭제 할 것
   @PermissionRequired('admin_only_permission_1')
   @Get('admin')
-  getAdminPage(@Request() req: Request & { user: User }) {
-    return req.user;
+  getAdminPage(@UserId() userId: number) {
+    return userId;
   }
 }
