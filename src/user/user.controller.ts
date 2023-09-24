@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { UserApplication } from './user.application';
 import { LocalAuthGuard } from './guards/local-auth.guards';
@@ -24,10 +24,16 @@ export class UserController {
     return await this.userApplication.signUp(signUpDto);
   }
 
-  // TODO: 로그인 확인용 임시 API, 삭제 할 것
+  // @AuthenticationRequired()
+  @Get(':username/profile')
+  async getUserProfile(@Param('usernmae') username: string) {
+    return await this.userApplication.getUserProfile(username);
+  }
+
+  // TODO: 권한 확인용 임시 API, 삭제 할 것
   @AuthenticationRequired()
-  @Get('profile')
-  getProfile(@UserId() userId: number) {
+  @Get('auth-check')
+  authCheck(@UserId() userId: number) {
     return userId;
   }
 
