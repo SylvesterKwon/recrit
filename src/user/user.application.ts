@@ -28,4 +28,19 @@ export class UserApplication {
   async signUp(signUpDto: SignUpDto) {
     await this.userService.create(signUpDto);
   }
+
+  @Transactional()
+  async getUserProfile(username: string) {
+    const user = await this.userRepository.findByUsername(username);
+    if (!user) throw new UserNotFoundException();
+
+    // TODO: Add profile visibility option and develop this logic
+    const getUserProfileDto = {
+      username: user.username,
+      userId: user.id,
+      createdAt: user.createdAt,
+    };
+
+    return getUserProfileDto;
+  }
 }
