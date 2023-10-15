@@ -8,12 +8,14 @@ import {
   EmailAlreadyExistsException,
   UsernameAlreadyExistsException,
 } from 'src/common/exceptions/user.exception';
+import { GraphRepository } from 'src/graph/graph.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private permissionRepository: PermissionRepository,
+    private graphRepository: GraphRepository,
   ) {}
 
   async create(dto: SignUpDto) {
@@ -28,12 +30,17 @@ export class UserService {
 
     const hashedPassword = await this.hashPassword(dto.password);
 
-    this.userRepository.create({
+    const user = this.userRepository.create({
       email: dto.email,
       username: dto.username,
       hashedPassword: hashedPassword,
       // TODO(User): sign up 시 기본 role 설정
     });
+
+    const em = this.userRepository.getEntityManager();
+    await em.flush(); // flush to generate id
+
+    await this.graphRepository.createUserNode(user);
   }
 
   remove(userId: number) {

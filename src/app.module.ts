@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import authConfig from './config/auth.config';
 import { Neo4jConnection, Neo4jModule, Neo4jScheme } from 'nest-neo4j';
 import neo4jConfig from './config/neo4j.config';
+import { GraphModule } from './graph/graph.module';
 
 @Module({
   imports: [
@@ -30,11 +31,15 @@ import neo4jConfig from './config/neo4j.config';
         username: configService.get<string>('neo4j.username') as string,
         password: configService.get<string>('neo4j.password') as string,
         database: configService.get<string>('neo4j.database') as string,
+        config: {
+          disableLosslessIntegers: true, // reference: https://github.com/neo4j/neo4j-javascript-driver#enable-native-numbers
+        },
       }),
     }),
     TmdbClientModule,
     MovieModule,
     UserModule,
+    GraphModule,
   ],
   controllers: [AppController],
   providers: [AppService],

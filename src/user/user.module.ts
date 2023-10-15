@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { GraphModule } from 'src/graph/graph.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LocalStrategy } from './strategies/local.strategy';
         signOptions: { expiresIn: configService.get<string>('auth.expiresIn') },
       }),
     }),
+    GraphModule,
   ],
   controllers: [UserController],
   providers: [
