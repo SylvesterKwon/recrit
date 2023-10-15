@@ -11,12 +11,16 @@ export class IdEntity {
 export class TimestampedEntity extends IdEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt';
 
-  @Property({ onCreate: () => dayjs().utc().toDate() })
+  @Property({
+    onCreate: () => dayjs().utc().toDate(),
+    defaultRaw: 'now()',
+  })
   createdAt: Date;
 
   @Property({
     onCreate: () => dayjs().utc().toDate(),
     onUpdate: () => dayjs().utc().toDate(),
+    defaultRaw: 'now()',
   })
   updatedAt: Date;
 }

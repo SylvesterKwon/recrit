@@ -1,8 +1,14 @@
-import { Collection, Entity, ManyToMany, Property, t } from '@mikro-orm/core';
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  Property,
+  Unique,
+  t,
+} from '@mikro-orm/core';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
 import { MovieRepository } from '../movie.repository';
 import { MovieGenre } from './movie-genre.entity';
-import { Create } from 'src/common/types/entity.types';
 import { MovieStatus } from '../types/movie.types';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
@@ -10,6 +16,7 @@ import { MovieStatus } from '../types/movie.types';
 @Entity({ customRepository: () => MovieRepository })
 export class Movie extends TimestampedEntity {
   @Property()
+  @Unique()
   tmdbId: number;
 
   @Property()
@@ -75,25 +82,4 @@ export class Movie extends TimestampedEntity {
 
   @Property()
   video?: boolean;
-
-  constructor(props: Create<Movie>) {
-    super();
-    this.tmdbId = props.tmdbId;
-    this.adult = props.adult;
-    this.backdropPath = props.backdropPath;
-    this.budget = props.budget;
-    this.homepage = props.homepage;
-    this.imdbId = props.imdbId;
-    this.originalLanguage = props.originalLanguage;
-    this.originalTitle = props.originalTitle;
-    this.overview = props.overview;
-    this.posterPath = props.posterPath;
-    this.releaseDate = props.releaseDate;
-    this.revenue = props.revenue;
-    this.runtime = props.runtime;
-    this.status = props.status;
-    this.tagline = props.tagline;
-    this.title = props.title;
-    this.video = props.video;
-  }
 }

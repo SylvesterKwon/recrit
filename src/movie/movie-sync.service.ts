@@ -63,14 +63,11 @@ export class MovieSyncService {
 
   async syncMovieByTmdbId(tmdbId: number) {
     try {
-      const movieUpsertPropsWithRelation =
-        await this.tmdbClientService.getMovie(tmdbId);
+      const tmdbMovieData = await this.tmdbClientService.getMovie(tmdbId);
 
-      const movie = await this.movieRepository.upsertByTmdbId(
-        movieUpsertPropsWithRelation,
-      );
+      const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
       const genres = await this.movieGenreRepository.findByTmdbIds(
-        movieUpsertPropsWithRelation.genreTmdbIds,
+        tmdbMovieData.movieRelations.genreTmdbIds,
       );
 
       movie.genres.set(genres);
@@ -82,11 +79,14 @@ export class MovieSyncService {
   }
 
   async syncMovieGenresByLanguage(language: ISO6391) {
-    const movieGenreUpsertDataList =
-      await this.tmdbClientService.getAllMovieGenres(language);
+    const tmdbMovieGenresData = await this.tmdbClientService.getAllMovieGenres(
+      language,
+    );
 
-    return await this.movieGenreRepository.upsertManyByTmdbId(
-      movieGenreUpsertDataList,
+    await Promise.all(
+      tmdbMovieGenresData.map((tmdbMovieGenreData) => {
+        return this.movieGenreRepository.upsert(tmdbMovieGenreData);
+      }),
     );
   }
 }
