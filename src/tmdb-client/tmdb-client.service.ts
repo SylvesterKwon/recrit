@@ -7,11 +7,15 @@ import readline from 'readline';
 import { firstValueFrom } from 'rxjs';
 import { MovieDb } from 'moviedb-promise';
 import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
-import { UpsertWithRequired } from 'src/common/types/entity.types';
 import { Movie } from 'src/movie/entities/movie.entity';
 import { MovieRelations } from 'src/movie/types/movie.types';
 import { ISO6391 } from 'src/common/types/iso-639-1.types';
 import { TmdbMovieIdResponse } from './types/tmdb-client.types';
+import { EntityData } from '@mikro-orm/core';
+import {
+  WithRequiredProp,
+  WithRequiredProps,
+} from 'src/common/types/utility.types';
 
 @Injectable()
 export class TmdbClientService {
@@ -31,30 +35,37 @@ export class TmdbClientService {
 
   async getMovie(tmdbId: number) {
     const res = await this.movieDb.movieInfo({ id: tmdbId });
-    const movieUpsertPropsWithRelation: UpsertWithRequired<Movie, 'tmdbId'> &
-      MovieRelations = {
-      tmdbId: res.id as number,
-      adult: res.adult,
-      backdropPath: res.backdrop_path,
-      budget: res.budget,
-      genreTmdbIds: res.genres?.map((genre) => genre.id as number) ?? [],
-      homepage: res.homepage,
-      imdbId: res.imdb_id,
-      originalLanguage: res.original_language,
-      originalTitle: res.original_title,
-      overview: res.overview,
-      posterPath: res.poster_path,
-      releaseDate: res.release_date
-        ? dayjs(res.release_date).toDate()
-        : undefined,
-      revenue: res.revenue,
-      runtime: res.runtime,
-      status: res.status,
-      tagline: res.tagline,
-      title: res.title,
-      video: res.video,
+    const tmdbMovieData: {
+      movieProps: WithRequiredProp<EntityData<Movie>, 'tmdbId'>;
+      movieRelations: MovieRelations;
+    } = {
+      movieProps: {
+        tmdbId: res.id as number,
+        adult: res.adult,
+        backdropPath: res.backdrop_path,
+        budget: res.budget,
+
+        homepage: res.homepage,
+        imdbId: res.imdb_id,
+        originalLanguage: res.original_language,
+        originalTitle: res.original_title,
+        overview: res.overview,
+        posterPath: res.poster_path,
+        releaseDate: res.release_date
+          ? dayjs(res.release_date).toDate()
+          : undefined,
+        revenue: res.revenue,
+        runtime: res.runtime,
+        status: res.status,
+        tagline: res.tagline,
+        title: res.title,
+        video: res.video,
+      },
+      movieRelations: {
+        genreTmdbIds: res.genres?.map((genre) => genre.id as number) ?? [],
+      },
     };
-    return movieUpsertPropsWithRelation;
+    return tmdbMovieData;
   }
 
   async getAllMovieGenres(language: ISO6391) {
@@ -62,9 +73,9 @@ export class TmdbClientService {
     if (!res.genres) {
       throw new Error('No genres found');
     }
-    const movieGenreUpsertDataList: UpsertWithRequired<
-      MovieGenre,
-      'tmdbId' | 'name'
+    const tmdbMovieGenresData: WithRequiredProps<
+      EntityData<MovieGenre>,
+      ['tmdbId', 'name']
     >[] = res.genres
       .filter((genre): genre is { id: number; name: string } =>
         Boolean(genre.id && genre.name),
@@ -73,7 +84,7 @@ export class TmdbClientService {
         tmdbId: genre.id,
         name: genre.name,
       }));
-    return movieGenreUpsertDataList;
+    return tmdbMovieGenresData;
   }
 
   private getDailyFileExportsUrl(date: Dayjs) {

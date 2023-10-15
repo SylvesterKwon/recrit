@@ -15,7 +15,7 @@ export class MovieSyncApplication {
     this.syncMovieGenres();
     // delay(1000);
     // this.syncMovie(2);
-    // this.syncAllMovies();
+    this.syncAllMovies();
   }
 
   /**
