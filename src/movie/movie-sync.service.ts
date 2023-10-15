@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { MovieRepository } from './movie.repository';
 import { ISO6391 } from 'src/common/types/iso-639-1.types';
 import { delay } from 'src/common/utils/delay';
+import { GraphRepository } from 'src/graph/graph.repository';
 
 @Injectable()
 export class MovieSyncService {
@@ -12,6 +13,7 @@ export class MovieSyncService {
     private tmdbClientService: TmdbClientService,
     private movieRepository: MovieRepository,
     private movieGenreRepository: MovieGenreRepository,
+    private graphRepository: GraphRepository,
   ) {}
 
   async syncAllMovies() {
@@ -21,7 +23,7 @@ export class MovieSyncService {
       await this.tmdbClientService.getValidTmdbMovieIdsByDate(yesterday);
 
     // TODO: remove this line
-    validTmdbMovieIds = validTmdbMovieIds.slice(0, 75);
+    validTmdbMovieIds = validTmdbMovieIds.slice(0, 100);
 
     const chunkSize = 50;
     const intervalMilliseconds = 1200;
@@ -74,6 +76,16 @@ export class MovieSyncService {
       );
 
       movie.genres.set(genres);
+
+      const em = this.movieRepository.getEntityManager();
+      await em.flush();
+
+      await this.graphRepository.upsertComparableNode(
+        'Movie',
+        movie.id,
+        movie.title,
+      );
+
       return movie;
     } catch (err) {
       console.log('error tmdb id: ', tmdbId);
