@@ -19,11 +19,11 @@ import {
 
 @Injectable()
 export class TmdbClientService {
-  private readonly movieDb: MovieDb;
+  private movieDb: MovieDb;
 
   constructor(
-    private readonly configService: ConfigService,
-    private readonly httpService: HttpService,
+    private configService: ConfigService,
+    private httpService: HttpService,
   ) {
     const apiKey = this.configService.get<string>('tmdbClient.tmdbApiKey');
     if (!apiKey) {

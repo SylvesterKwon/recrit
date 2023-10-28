@@ -6,15 +6,20 @@ import {
   Unique,
   t,
 } from '@mikro-orm/core';
-import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
 import { MovieRepository } from '../movie.repository';
 import { MovieGenre } from './movie-genre.entity';
 import { MovieStatus } from '../types/movie.types';
+import { Comparable } from 'src/comparable/comparable.entity';
+import { ComparableType } from 'src/comparable/types/comparable.types';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
 
 @Entity({ customRepository: () => MovieRepository })
-export class Movie extends TimestampedEntity {
+export class Movie extends Comparable {
+  get type() {
+    return ComparableType.MOVIE;
+  }
+
   @Property()
   @Unique()
   tmdbId: number;

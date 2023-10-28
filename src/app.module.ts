@@ -10,6 +10,7 @@ import { Neo4jConnection, Neo4jModule, Neo4jScheme } from 'nest-neo4j';
 import neo4jConfig from './config/neo4j.config';
 import { GraphModule } from './graph/graph.module';
 import { ComparisonModule } from './comparison/comparison.module';
+import { ComparableModule } from './comparable/comparable.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ComparisonModule } from './comparison/comparison.module';
       }),
     }),
     ComparisonModule,
+    ComparableModule,
     TmdbClientModule,
     MovieModule,
     UserModule,

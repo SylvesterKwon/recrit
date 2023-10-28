@@ -15,12 +15,12 @@ export class GraphConstraintService {
     console.log('Setting user_id constraint');
     await this.neo4jService.write(
       `CREATE CONSTRAINT user_id IF NOT EXISTS
-      FOR (u:User) REQUIRE u.id IS UNIQUE`,
+      FOR (u:user) REQUIRE u.id IS UNIQUE`,
     );
   }
 
   async setComparableIdConstraint(comparableType: string) {
-    console.log(`Setting ${comparableType}_id constraint`);
+    console.log(`Setting ${comparableType} id constraint`);
     await this.neo4jService.write(
       `CREATE CONSTRAINT ${comparableType}_id IF NOT EXISTS
       FOR (c:${comparableType}) REQUIRE c.id IS UNIQUE`,

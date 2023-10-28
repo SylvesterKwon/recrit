@@ -5,7 +5,7 @@ import { HttpException } from '@nestjs/common';
  * All custom exceptions should extend this class.
  */
 export class BaseException extends HttpException {
-  errorCode: string;
+  errorCode: string; // TODO: rename this as exceptionCode, exception isn't equivalant to error
 
   constructor(errorCode: string, statusCode: number) {
     const fullErrorCode = ['RECRIT', errorCode].join(':');

@@ -8,14 +8,14 @@ import { Transactional } from 'src/common/decorators/transactional.decorator';
 @Injectable()
 export class MovieSyncApplication {
   constructor(
-    private readonly orm: MikroORM,
-    private readonly movieSyncService: MovieSyncService,
+    private orm: MikroORM,
+    private movieSyncService: MovieSyncService,
   ) {
     // TODO: 테스트용 임시 코드, 삭제 필요
-    this.syncMovieGenres();
+    // this.syncMovieGenres();
     // delay(1000);
     // this.syncMovie(2);
-    this.syncAllMovies();
+    // this.syncAllMovies();
   }
 
   /**
