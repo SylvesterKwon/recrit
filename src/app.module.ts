@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppService } from './app.service';
 import { TmdbClientModule } from './tmdb-client/tmdb-client.module';
 import tmdbClientConfig from './config/tmdb-client.config';
 import { MovieModule } from './movie/movie.module';
@@ -11,6 +9,7 @@ import authConfig from './config/auth.config';
 import { Neo4jConnection, Neo4jModule, Neo4jScheme } from 'nest-neo4j';
 import neo4jConfig from './config/neo4j.config';
 import { GraphModule } from './graph/graph.module';
+import { ComparisonModule } from './comparison/comparison.module';
 
 @Module({
   imports: [
@@ -36,12 +35,11 @@ import { GraphModule } from './graph/graph.module';
         },
       }),
     }),
+    ComparisonModule,
     TmdbClientModule,
     MovieModule,
     UserModule,
     GraphModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
