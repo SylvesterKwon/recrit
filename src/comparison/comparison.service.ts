@@ -3,7 +3,7 @@ import { ComparisonRepository } from './comparison.repository';
 import { GraphRepository } from 'src/graph/graph.repository';
 import { ComparisonVerdict } from './entities/comparison.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Comparable } from 'src/comparable/comparable.entity';
+import { Comparable } from 'src/common/entities/comparable.entity';
 import { SameComparisonExistsException } from 'src/common/exceptions/comparison.exception';
 
 @Injectable()

@@ -6,6 +6,7 @@ import { MovieGenre } from './entities/movie-genre.entity';
 import { MovieSyncApplication } from './movie-sync.application';
 import { Movie } from './entities/movie.entity';
 import { GraphModule } from 'src/graph/graph.module';
+import { MovieService } from './movie.service';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GraphModule } from 'src/graph/graph.module';
     GraphModule,
   ],
   controllers: [],
-  providers: [MovieSyncApplication, MovieSyncService],
+  providers: [MovieService, MovieSyncApplication, MovieSyncService],
+  exports: [MovieService],
 })
 export class MovieModule {}

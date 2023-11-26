@@ -7,12 +7,6 @@ class ComparisonException extends BaseException {
   }
 }
 
-export class ComparableNotFoundException extends ComparisonException {
-  constructor() {
-    super(ComparisonErrorCode.COMPARABLE_NOT_FOUND, HttpStatus.NOT_FOUND);
-  }
-}
-
 export class SameComparisonExistsException extends ComparisonException {
   constructor() {
     super(ComparisonErrorCode.SAME_COMPARISON_EXISTS, HttpStatus.BAD_REQUEST);
@@ -20,6 +14,5 @@ export class SameComparisonExistsException extends ComparisonException {
 }
 
 export enum ComparisonErrorCode {
-  COMPARABLE_NOT_FOUND = 'COMPARABLE_NOT_FOUND',
   SAME_COMPARISON_EXISTS = 'SAME_COMPARISON_EXISTS',
 }

@@ -1,5 +1,5 @@
 import { Entity, Enum, ManyToOne, Property, Ref } from '@mikro-orm/core';
-import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
+import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 import { ComparisonRepository } from '../comparison.repository';
 import { User } from 'src/user/entities/user.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';

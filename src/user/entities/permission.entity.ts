@@ -5,7 +5,7 @@ import {
   Property,
   Unique,
 } from '@mikro-orm/core';
-import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
+import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 import { PermissionRepository } from '../repositories/permission.repository';
 import { Role } from './role.entity';
 

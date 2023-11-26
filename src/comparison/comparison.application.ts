@@ -4,17 +4,17 @@ import { ComparisonService } from './comparison.service';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { ComparisonVerdict } from './entities/comparison.entity';
-import { ComparableService } from 'src/comparable/comparable.service';
+import { ComparableProxyService } from 'src/comparable/comparable-proxy.service';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
-import { ComparableNotFoundException } from 'src/common/exceptions/comparison.exception';
+import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
 
 @Injectable()
 export class ComparisonApplication {
   constructor(
     private orm: MikroORM,
     private comparisonService: ComparisonService,
-    private comparableService: ComparableService,
+    private comparableProxyService: ComparableProxyService,
     private userRepository: UserRepository,
   ) {}
 
@@ -29,11 +29,11 @@ export class ComparisonApplication {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const firstItem = await this.comparableService.getComparable(
+    const firstItem = await this.comparableProxyService.getComparable(
       comparableType,
       firstItemId,
     );
-    const secondItem = await this.comparableService.getComparable(
+    const secondItem = await this.comparableProxyService.getComparable(
       comparableType,
       secondItemId,
     );
