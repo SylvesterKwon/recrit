@@ -1,13 +1,5 @@
-import {
-  Collection,
-  Entity,
-  ManyToMany,
-  Property,
-  Unique,
-  t,
-} from '@mikro-orm/core';
+import { ArrayType, Entity, Property, Unique, t } from '@mikro-orm/core';
 import { MovieRepository } from '../movie.repository';
-import { MovieGenre } from './movie-genre.entity';
 import { MovieStatus } from '../types/movie.types';
 import { Comparable } from 'src/comparable/comparable.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
@@ -36,9 +28,6 @@ export class Movie extends Comparable {
   @Property({ type: t.bigint })
   budget?: number;
 
-  @ManyToMany()
-  genres = new Collection<MovieGenre>(this);
-
   @Property()
   homepage?: string;
 
@@ -58,12 +47,6 @@ export class Movie extends Comparable {
   @Property()
   posterPath?: string;
 
-  // @Property()
-  // productionCompanies?: Array<ProductionCompany>;
-
-  // @Property()
-  // productionCountries?: Array<ProductionCountry>;
-
   @Property()
   releaseDate?: Date;
 
@@ -72,9 +55,6 @@ export class Movie extends Comparable {
 
   @Property()
   runtime?: number;
-
-  // @Property()
-  // spokenLanguages?: Array<SpokenLanguage>;
 
   @Property()
   status?: MovieStatus;
@@ -87,4 +67,19 @@ export class Movie extends Comparable {
 
   @Property()
   video?: boolean;
+
+  @Property({ type: ArrayType, nullable: true })
+  genreIds?: number[];
+
+  // TODO: Add production company property
+  // @Property({ type: ArrayType, nullable: true })
+  // productionCompanyIds?: ProductionCompany[];
+
+  // TODO: type this with ISO 3166-1 code
+  @Property({ type: ArrayType, nullable: true })
+  productionCountryCodes?: string[];
+
+  // TODO: types this with ISO 639-1 code
+  @Property({ type: ArrayType, nullable: true })
+  spokenLanguageCodes?: string[];
 }
