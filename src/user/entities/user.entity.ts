@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, Property, Ref, Unique } from '@mikro-orm/core';
-import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
+import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 import { Role } from './role.entity';
 import { UserRepository } from '../repositories/user.repository';
 

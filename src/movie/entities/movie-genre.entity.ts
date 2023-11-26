@@ -1,5 +1,5 @@
 import { Entity, Property, Unique } from '@mikro-orm/core';
-import { TimestampedEntity } from 'src/common/entities/timestamped-entity';
+import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 import { MovieGenreRepository } from '../movie-genre.repository';
 
 @Entity({ customRepository: () => MovieGenreRepository })

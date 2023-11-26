@@ -1,7 +1,7 @@
 import { ArrayType, Entity, Property, Unique, t } from '@mikro-orm/core';
 import { MovieRepository } from '../movie.repository';
 import { MovieStatus } from '../types/movie.types';
-import { Comparable } from 'src/comparable/comparable.entity';
+import { Comparable } from 'src/common/entities/comparable.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
