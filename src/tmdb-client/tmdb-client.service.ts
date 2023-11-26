@@ -9,7 +9,7 @@ import { MovieDb } from 'moviedb-promise';
 import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 import { Movie } from 'src/movie/entities/movie.entity';
 import { MovieRelations } from 'src/movie/types/movie.types';
-import { ISO6391 } from 'src/common/types/iso-639-1.types';
+import { ISO6391 } from 'src/common/types/iso.types';
 import { TmdbMovieIdResponse } from './types/tmdb-client.types';
 import { EntityData } from '@mikro-orm/core';
 import {
@@ -36,15 +36,14 @@ export class TmdbClientService {
   async getMovie(tmdbId: number) {
     const res = await this.movieDb.movieInfo({ id: tmdbId });
     const tmdbMovieData: {
-      movieProps: WithRequiredProp<EntityData<Movie>, 'tmdbId'>;
-      movieRelations: MovieRelations;
+      movieProps: WithRequiredProp<EntityData<Movie>, 'tmdbId'>; // simple properties
+      movieRelations: MovieRelations; // relations
     } = {
       movieProps: {
         tmdbId: res.id as number,
         adult: res.adult,
         backdropPath: res.backdrop_path,
         budget: res.budget,
-
         homepage: res.homepage,
         imdbId: res.imdb_id,
         originalLanguage: res.original_language,
@@ -60,9 +59,20 @@ export class TmdbClientService {
         tagline: res.tagline,
         title: res.title,
         video: res.video,
+        productionCountryCodes:
+          res.production_countries?.map(
+            (country) => country.iso_3166_1 as string,
+          ) ?? [],
+        spokenLanguageCodes:
+          res.spoken_languages?.map(
+            (language) => language.iso_639_1 as string,
+          ) ?? [],
       },
       movieRelations: {
         genreTmdbIds: res.genres?.map((genre) => genre.id as number) ?? [],
+        productionCompanyTmdbIds:
+          res.production_companies?.map((company) => company.id as number) ??
+          [],
       },
     };
     return tmdbMovieData;

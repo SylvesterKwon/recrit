@@ -8,4 +8,5 @@ export type MovieStatus =
 
 export type MovieRelations = {
   genreTmdbIds: number[];
+  productionCompanyTmdbIds: number[];
 };

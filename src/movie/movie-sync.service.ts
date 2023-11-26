@@ -3,7 +3,7 @@ import { TmdbClientService } from 'src/tmdb-client/tmdb-client.service';
 import { MovieGenreRepository } from './movie-genre.repository';
 import dayjs from 'dayjs';
 import { MovieRepository } from './movie.repository';
-import { ISO6391 } from 'src/common/types/iso-639-1.types';
+import { ISO6391 } from 'src/common/types/iso.types';
 import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/graph.repository';
 import { ComparableType } from 'src/comparable/types/comparable.types';
@@ -68,12 +68,13 @@ export class MovieSyncService {
     try {
       const tmdbMovieData = await this.tmdbClientService.getMovie(tmdbId);
 
-      const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
+      // From TMDB genre id to Recrit genre id
       const genres = await this.movieGenreRepository.findByTmdbIds(
         tmdbMovieData.movieRelations.genreTmdbIds,
       );
-
-      movie.genres.set(genres);
+      const genreIds = genres.map((genre) => genre.id);
+      tmdbMovieData.movieProps.genreIds = genreIds;
+      const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
 
       const em = this.movieRepository.getEntityManager();
       await em.flush();

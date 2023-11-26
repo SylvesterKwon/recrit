@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MovieSyncService } from './movie-sync.service';
 import { MikroORM } from '@mikro-orm/core';
-import { ISO6391 } from 'src/common/types/iso-639-1.types';
+import { ISO6391 } from 'src/common/types/iso.types';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
 // import { delay } from 'src/common/utils/delay';
 
@@ -12,9 +12,8 @@ export class MovieSyncApplication {
     private movieSyncService: MovieSyncService,
   ) {
     // TODO: 테스트용 임시 코드, 삭제 필요
-    this.syncMovieGenres();
+    // this.syncMovieGenres();
     // delay(1000);
-    this.syncMovie(2);
     this.syncAllMovies();
   }
 
