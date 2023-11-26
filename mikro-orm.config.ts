@@ -12,7 +12,7 @@ const config: Options = {
   password: process.env.MIKRO_ORM_PASSWORD,
   dbName: process.env.MIKRO_ORM_DB_NAME,
   debug: process.env.MIKRO_ORM_DEBUG === 'true',
-  type: 'mysql',
+  type: 'postgresql',
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
   loadStrategy: LoadStrategy.JOINED,
