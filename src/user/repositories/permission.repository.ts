@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/mysql';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import { Permission } from '../entities/permission.entity';
 
 export class PermissionRepository extends EntityRepository<Permission> {

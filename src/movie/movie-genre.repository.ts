@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/mysql';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import { MovieGenre } from './entities/movie-genre.entity';
 
 export class MovieGenreRepository extends EntityRepository<MovieGenre> {
