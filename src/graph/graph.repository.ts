@@ -1,5 +1,10 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { Neo4jService } from 'nest-neo4j/dist';
+import { ComparableType } from 'src/comparable/types/comparable.types';
+import {
+  Comparison,
+  ComparisonVerdict,
+} from 'src/comparison/entities/comparison.entity';
 import { User } from 'src/user/entities/user.entity';
 
 /**
@@ -10,43 +15,64 @@ import { User } from 'src/user/entities/user.entity';
 export class GraphRepository {
   constructor(private neo4jService: Neo4jService) {}
 
-  async upsertComparableNode(
-    comparableType: string,
+  async upsertComparable(
+    comparableType: ComparableType,
     id: number,
     title?: string,
   ) {
-    const sameComparableNodeCountQueryResult = await this.neo4jService.read(
-      `MATCH (c:${comparableType} {id: ${id}})
-      RETURN count(c) AS comparableCount`,
+    await this.neo4jService.write(
+      `MERGE (c:${comparableType} {id: ${id}})
+      SET c.title = "${title}"
+      RETURN c`,
     );
-
-    const sameComparableNodeCount =
-      sameComparableNodeCountQueryResult.records[0].get('comparableCount');
-
-    if (sameComparableNodeCount === 0) {
-      await this.neo4jService.write(
-        `CREATE (c:${comparableType} {id: ${id}, title: "${title}"})
-        RETURN c`,
-      );
-    }
   }
 
   async createUserNode(user: User) {
     await this.neo4jService.write(
-      `CREATE (u:User {id: ${user.id}, username: "${user.username}"})
+      `CREATE (u:user {id: ${user.id}, username: "${user.username}"})
       RETURN u`,
     );
   }
 
   async deleteUserNode(user: User) {
     await this.neo4jService.write(
-      `MATCH (u:User {id: ${user.id}})
+      `MATCH (u:user {id: ${user.id}})
       DELETE u`,
     );
   }
 
-  async createComparison() {
-    throw new NotImplementedException();
+  /**
+   * Add comparison edge to graph, all redundant comparison edges will be removed.
+   */
+  async upsertComparison(comparison: Comparison) {
+    const firstComparableNode = `(c1:${comparison.comparableType} {id: ${comparison.firstItemId}})`;
+    const secondComparableNode = `(c2:${comparison.comparableType} {id: ${comparison.secondItemId}})`;
+    const userId = comparison.user.id;
+
+    console.log(`
+    MATCH ${firstComparableNode}, ${secondComparableNode}
+    OPTIONAL MATCH (c1)-[cmp:BETTER_THAN {user_id: ${userId}}]-(c2)
+    DELETE cmp
+    ${
+      comparison.verdict === ComparisonVerdict.EQUAL
+        ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1), (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // equal
+        : comparison.verdict === ComparisonVerdict.FIRST
+        ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
+        : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
+    }
+  `);
+    await this.neo4jService.write(`
+      MATCH ${firstComparableNode}, ${secondComparableNode}
+      OPTIONAL MATCH (c1)-[cmp:BETTER_THAN {user_id: ${userId}}]-(c2)
+      DELETE cmp
+      ${
+        comparison.verdict === ComparisonVerdict.EQUAL
+          ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1), (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // equal
+          : comparison.verdict === ComparisonVerdict.FIRST
+          ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
+          : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
+      }
+    `);
   }
 
   async getAllComparisonByUserId() {

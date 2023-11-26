@@ -6,6 +6,7 @@ import { MovieRepository } from './movie.repository';
 import { ISO6391 } from 'src/common/types/iso-639-1.types';
 import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/graph.repository';
+import { ComparableType } from 'src/comparable/types/comparable.types';
 
 @Injectable()
 export class MovieSyncService {
@@ -77,8 +78,8 @@ export class MovieSyncService {
       const em = this.movieRepository.getEntityManager();
       await em.flush();
 
-      await this.graphRepository.upsertComparableNode(
-        'Movie',
+      await this.graphRepository.upsertComparable(
+        ComparableType.MOVIE,
         movie.id,
         movie.title,
       );
