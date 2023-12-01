@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MovieSyncService } from './movie-sync.service';
-import { TmdbClientModule } from 'src/tmdb-client/tmdb-client.module';
+import { TmdbModule } from 'src/tmdb/tmdb.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { MovieSyncApplication } from './movie-sync.application';
@@ -10,7 +10,7 @@ import { MovieService } from './movie.service';
 
 @Module({
   imports: [
-    TmdbClientModule,
+    TmdbModule,
     MikroOrmModule.forFeature({ entities: [Movie, MovieGenre] }),
     GraphModule,
   ],

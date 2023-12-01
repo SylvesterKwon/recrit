@@ -21,7 +21,7 @@ export class Comparison extends TimestampedEntity {
   @ManyToOne()
   user: Ref<User>;
 
-  @Property({ nullable: true, length: 1024 })
+  @Property({ length: 1024 })
   comment?: string;
 }
 

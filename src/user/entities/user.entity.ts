@@ -16,6 +16,6 @@ export class User extends TimestampedEntity {
   @Property()
   hashedPassword: string;
 
-  @ManyToOne({ nullable: true })
+  @ManyToOne()
   role?: Ref<Role>;
 }
