@@ -15,7 +15,7 @@ export class Permission extends TimestampedEntity {
   @Unique()
   name: string;
 
-  @Property({ nullable: true })
+  @Property()
   description?: string;
 
   @ManyToMany({ mappedBy: 'permissions' })

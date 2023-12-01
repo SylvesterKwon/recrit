@@ -68,18 +68,18 @@ export class Movie extends Comparable {
   @Property()
   video?: boolean;
 
-  @Property({ type: ArrayType, nullable: true })
-  genreIds?: number[];
+  @Property({ type: ArrayType })
+  genreIds: number[];
 
   // TODO: Add production company property
-  // @Property({ type: ArrayType, nullable: true })
-  // productionCompanyIds?: ProductionCompany[];
+  // @Property({ type: ArrayType })
+  // productionCompanyIds: ProductionCompany[];
 
   // TODO: type this with ISO 3166-1 code
-  @Property({ type: ArrayType, nullable: true })
-  productionCountryCodes?: string[];
+  @Property({ type: ArrayType })
+  productionCountryCodes: string[];
 
   // TODO: types this with ISO 639-1 code
-  @Property({ type: ArrayType, nullable: true })
-  spokenLanguageCodes?: string[];
+  @Property({ type: ArrayType })
+  spokenLanguageCodes: string[];
 }
