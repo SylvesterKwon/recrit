@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TmdbClientModule } from './tmdb-client/tmdb-client.module';
+import { TmdbModule } from './tmdb/tmdb.module';
 import tmdbClientConfig from './config/tmdb-client.config';
 import { MovieModule } from './movie/movie.module';
 import { UserModule } from './user/user.module';
@@ -38,7 +38,7 @@ import { ComparableModule } from './comparable/comparable.module';
     }),
     ComparisonModule,
     ComparableModule,
-    TmdbClientModule,
+    TmdbModule,
     MovieModule,
     UserModule,
     GraphModule,

@@ -8,4 +8,4 @@ import { TmdbClientService } from './tmdb-client.service';
   exports: [TmdbClientService],
   providers: [TmdbClientService],
 })
-export class TmdbClientModule {}
+export class TmdbModule {}

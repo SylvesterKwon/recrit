@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TmdbClientService } from 'src/tmdb-client/tmdb-client.service';
+import { TmdbClientService } from 'src/tmdb/tmdb-client.service';
 import { MovieGenreRepository } from './movie-genre.repository';
 import dayjs from 'dayjs';
 import { MovieRepository } from './movie.repository';
