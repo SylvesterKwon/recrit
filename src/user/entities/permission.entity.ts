@@ -18,6 +18,6 @@ export class Permission extends TimestampedEntity {
   @Property()
   description?: string;
 
-  @ManyToMany({ mappedBy: 'permissions' })
+  @ManyToMany(() => Role, (role) => role.permissions)
   roles = new Collection<Role>(this);
 }

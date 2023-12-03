@@ -9,7 +9,7 @@ import { MovieDb } from 'moviedb-promise';
 import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 import { Movie } from 'src/movie/entities/movie.entity';
 import { MovieRelations } from 'src/movie/types/movie.types';
-import { ISO6391 } from 'src/common/types/iso.types';
+import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
 import { TmdbMovieIdResponse } from './types/tmdb-client.types';
 import { EntityData } from '@mikro-orm/core';
 import {
@@ -61,11 +61,11 @@ export class TmdbClientService {
         video: res.video,
         productionCountryCodes:
           res.production_countries?.map(
-            (country) => country.iso_3166_1 as string,
+            (country) => country.iso_3166_1 as ISO31661,
           ) ?? [],
         spokenLanguageCodes:
           res.spoken_languages?.map(
-            (language) => language.iso_639_1 as string,
+            (language) => language.iso_639_1 as ISO6391,
           ) ?? [],
       },
       movieRelations: {

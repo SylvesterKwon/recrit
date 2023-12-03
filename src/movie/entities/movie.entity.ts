@@ -1,8 +1,17 @@
-import { ArrayType, Entity, Property, Unique, t } from '@mikro-orm/core';
+import {
+  ArrayType,
+  Collection,
+  Entity,
+  ManyToMany,
+  Property,
+  Unique,
+  t,
+} from '@mikro-orm/core';
 import { MovieRepository } from '../movie.repository';
 import { MovieStatus } from '../types/movie.types';
 import { Comparable } from 'src/common/entities/comparable.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
+import { MovieGenre } from './movie-genre.entity';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
 
@@ -68,8 +77,8 @@ export class Movie extends Comparable {
   @Property()
   video?: boolean;
 
-  @Property({ type: ArrayType })
-  genreIds: number[];
+  @ManyToMany()
+  genres = new Collection<MovieGenre>(this);
 
   // TODO: Add production company property
   // @Property({ type: ArrayType })
