@@ -67,14 +67,11 @@ export class MovieSyncService {
   async syncMovieByTmdbId(tmdbId: number) {
     try {
       const tmdbMovieData = await this.tmdbClientService.getMovie(tmdbId);
-
-      // From TMDB genre id to Recrit genre id
+      const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
       const genres = await this.movieGenreRepository.findByTmdbIds(
         tmdbMovieData.movieRelations.genreTmdbIds,
       );
-      const genreIds = genres.map((genre) => genre.id);
-      tmdbMovieData.movieProps.genreIds = genreIds;
-      const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
+      movie.genres.set(genres);
 
       const em = this.movieRepository.getEntityManager();
       await em.flush();
@@ -87,6 +84,7 @@ export class MovieSyncService {
 
       return movie;
     } catch (err) {
+      // TODO: add sync error log table
       console.log('error tmdb id: ', tmdbId);
       console.error(err);
     }

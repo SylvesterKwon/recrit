@@ -20,9 +20,9 @@ export class Role extends TimestampedEntity {
   @Property()
   description?: string;
 
-  @ManyToMany({ inversedBy: 'roles' })
+  @ManyToMany()
   permissions = new Collection<Permission>(this);
 
-  @OneToMany({ mappedBy: 'role' })
+  @OneToMany(() => User, (user) => user.role)
   users = new Collection<User>(this);
 }

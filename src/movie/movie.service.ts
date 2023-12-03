@@ -19,6 +19,8 @@ export class MovieService extends BaseComparableService {
   }
 
   async getInformation(movie: Movie): Promise<MovieInformation> {
+    await movie.genres.init();
+    const movieGenres = movie.genres.getItems();
     const backdropUrl = movie.backdropPath
       ? this.tmdbUtilService.getBackdropUrl(movie.backdropPath)
       : undefined;
@@ -45,7 +47,7 @@ export class MovieService extends BaseComparableService {
       tagline: movie.tagline,
       title: movie.title,
       video: movie.video,
-      genreIds: movie.genreIds,
+      genreIds: movieGenres.map((genre) => genre.tmdbId),
       productionCountryCodes: movie.productionCountryCodes,
       spokenLanguageCodes: movie.spokenLanguageCodes,
     };

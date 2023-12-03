@@ -32,7 +32,7 @@ export type MovieInformation = {
   tagline?: string;
   title?: string;
   video?: boolean;
-  genreIds?: number[];
+  genreIds: number[];
   productionCountryCodes?: string[]; // TODO: type this with ISO 3166-1 code
   spokenLanguageCodes?: string[]; // TODO: types this with ISO 639-1 code
 };
