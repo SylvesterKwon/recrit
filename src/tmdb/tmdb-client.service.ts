@@ -8,9 +8,12 @@ import { firstValueFrom } from 'rxjs';
 import { MovieDb } from 'moviedb-promise';
 import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 import { Movie } from 'src/movie/entities/movie.entity';
-import { MovieRelations } from 'src/movie/types/movie.types';
+import { MovieRelations, MovieTranslations } from 'src/movie/types/movie.types';
 import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
-import { TmdbMovieIdResponse } from './types/tmdb-client.types';
+import {
+  MovieTranslationsResponseWithTagline,
+  TmdbMovieIdResponse,
+} from './types/tmdb-client.types';
 import { EntityData } from '@mikro-orm/core';
 import {
   WithRequiredProp,
@@ -76,6 +79,24 @@ export class TmdbClientService {
       },
     };
     return tmdbMovieData;
+  }
+
+  async getMovieTransalations(tmdbId: number) {
+    const res = (await this.movieDb.movieTranslations({
+      id: tmdbId,
+    })) as MovieTranslationsResponseWithTagline;
+    const tmdbMovieTranslationsData: MovieTranslations =
+      res.translations?.map((translation) => ({
+        iso31661: translation.iso_3166_1 as ISO31661,
+        iso6391: translation.iso_639_1 as ISO6391,
+        data: {
+          homepage: translation.data?.homepage,
+          overview: translation.data?.overview,
+          tagline: translation.data?.tagline,
+          title: translation.data?.title,
+        },
+      })) ?? [];
+    return tmdbMovieTranslationsData;
   }
 
   async getAllMovieGenres(language: ISO6391) {

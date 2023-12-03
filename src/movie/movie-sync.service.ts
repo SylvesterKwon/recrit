@@ -67,6 +67,10 @@ export class MovieSyncService {
   async syncMovieByTmdbId(tmdbId: number) {
     try {
       const tmdbMovieData = await this.tmdbClientService.getMovie(tmdbId);
+      const movieTranslations =
+        await this.tmdbClientService.getMovieTransalations(tmdbId);
+      tmdbMovieData.movieProps.translations = movieTranslations;
+
       const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
       const genres = await this.movieGenreRepository.findByTmdbIds(
         tmdbMovieData.movieRelations.genreTmdbIds,
