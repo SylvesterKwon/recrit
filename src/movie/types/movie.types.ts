@@ -1,16 +1,3 @@
-import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
-
-export type MovieTranslations = {
-  iso31661: ISO31661;
-  iso6391: ISO6391;
-  data: {
-    homepage?: string;
-    overview?: string;
-    tagline?: string;
-    title?: string;
-  };
-}[];
-
 export type MovieStatus =
   | 'Rumored'
   | 'Planned'

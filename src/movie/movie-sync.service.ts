@@ -7,6 +7,7 @@ import { ISO6391 } from 'src/common/types/iso.types';
 import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/graph.repository';
 import { ComparableType } from 'src/comparable/types/comparable.types';
+import { MovieTranslationRepository } from './movie-translation.repository';
 
 @Injectable()
 export class MovieSyncService {
@@ -14,6 +15,7 @@ export class MovieSyncService {
     private tmdbClientService: TmdbClientService,
     private movieRepository: MovieRepository,
     private movieGenreRepository: MovieGenreRepository,
+    private movieTranslationRepository: MovieTranslationRepository,
     private graphRepository: GraphRepository,
   ) {}
 
@@ -67,11 +69,18 @@ export class MovieSyncService {
   async syncMovieByTmdbId(tmdbId: number) {
     try {
       const tmdbMovieData = await this.tmdbClientService.getMovie(tmdbId);
-      const movieTranslations =
-        await this.tmdbClientService.getMovieTransalations(tmdbId);
-      tmdbMovieData.movieProps.translations = movieTranslations;
+      const movieTranslationDataList =
+        await this.tmdbClientService.getMovieTranslations(tmdbId);
 
       const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
+
+      // sync movie translations
+      await this.movieTranslationRepository.upsertManyByMovieAndIsoCodes(
+        movie,
+        movieTranslationDataList,
+      );
+
+      // sync movie genres
       const genres = await this.movieGenreRepository.findByTmdbIds(
         tmdbMovieData.movieRelations.genreTmdbIds,
       );

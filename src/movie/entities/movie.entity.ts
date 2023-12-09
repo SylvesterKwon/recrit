@@ -3,16 +3,18 @@ import {
   Collection,
   Entity,
   ManyToMany,
+  OneToMany,
   Property,
   Unique,
   t,
 } from '@mikro-orm/core';
 import { MovieRepository } from '../movie.repository';
-import { MovieStatus, MovieTranslations } from '../types/movie.types';
+import { MovieStatus } from '../types/movie.types';
 import { Comparable } from 'src/common/entities/comparable.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { MovieGenre } from './movie-genre.entity';
 import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
+import { MovieTranslation } from './movie-translation.entity';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
 
@@ -81,6 +83,11 @@ export class Movie extends Comparable {
   @ManyToMany()
   genres = new Collection<MovieGenre>(this);
 
+  @OneToMany(() => MovieTranslation, (translation) => translation.movie, {
+    orphanRemoval: true,
+  })
+  translations = new Collection<MovieTranslation>(this);
+
   // TODO: Add production company property
   // @Property({ type: ArrayType })
   // productionCompanyIds: ProductionCompany[];
@@ -90,7 +97,4 @@ export class Movie extends Comparable {
 
   @Property({ type: ArrayType })
   spokenLanguageCodes: ISO6391[];
-
-  @Property({ type: 'json' })
-  translations: MovieTranslations;
 }

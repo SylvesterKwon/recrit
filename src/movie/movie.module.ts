@@ -7,11 +7,14 @@ import { MovieSyncApplication } from './movie-sync.application';
 import { Movie } from './entities/movie.entity';
 import { GraphModule } from 'src/graph/graph.module';
 import { MovieService } from './movie.service';
+import { MovieTranslation } from './entities/movie-translation.entity';
 
 @Module({
   imports: [
     TmdbModule,
-    MikroOrmModule.forFeature({ entities: [Movie, MovieGenre] }),
+    MikroOrmModule.forFeature({
+      entities: [Movie, MovieGenre, MovieTranslation],
+    }),
     GraphModule,
   ],
   controllers: [],
