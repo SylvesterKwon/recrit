@@ -106,6 +106,7 @@ export class MovieSyncService {
   }
 
   async syncMovieGenresByLanguage(iso6391: ISO6391) {
+    // TODO: Add sync failure handling
     const tmdbMovieGenreDataList =
       await this.tmdbClientService.getAllMovieGenres(iso6391);
 

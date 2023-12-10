@@ -6,12 +6,15 @@ import { MovieRepository } from '../repositories/movie.repository';
 import { TmdbUtilService } from 'src/tmdb/services/tmdb-util.service';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
+import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
+import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 
 @Injectable()
 export class MovieService extends BaseComparableService {
   constructor(
     private movieRepository: MovieRepository,
     private movieTranslationRepository: MovieTranslationRepository,
+    private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private tmdbUtilService: TmdbUtilService,
   ) {
     super();
@@ -35,6 +38,7 @@ export class MovieService extends BaseComparableService {
       : undefined;
 
     let movieTranslation = null;
+    let movieGenreTranslations: MovieGenreTranslation[] | null = null;
 
     if (languageIsoCodes) {
       if (languageIsoCodes.iso31661) {
@@ -49,9 +53,11 @@ export class MovieService extends BaseComparableService {
           iso6391: languageIsoCodes?.iso6391,
         });
       }
+      movieGenreTranslations = await this.movieGenreTranslationRepository.find({
+        iso6391: languageIsoCodes?.iso6391,
+        movieGenre: { $in: movieGenres },
+      });
     }
-
-    console.log(movieTranslation);
 
     return {
       id: movie.id,
@@ -78,7 +84,18 @@ export class MovieService extends BaseComparableService {
         : movie.tagline,
       title: movieTranslation?.title ? movieTranslation.title : movie.title,
       video: movie.video,
-      genreIds: movieGenres.map((genre) => genre.tmdbId),
+      genres: movieGenres.map((genre) => {
+        const movieGenreTranslation = movieGenreTranslations?.find(
+          (movieGenreTranslation) =>
+            movieGenreTranslation.movieGenre.id === genre.id,
+        );
+        return {
+          genreId: genre.id,
+          name: movieGenreTranslation?.name
+            ? movieGenreTranslation.name
+            : genre.name,
+        };
+      }),
       productionCountryCodes: movie.productionCountryCodes,
       spokenLanguageCodes: movie.spokenLanguageCodes,
     };
