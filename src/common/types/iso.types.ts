@@ -441,3 +441,11 @@ export type ISO6391 =
   | 'ch'
   | 'be'
   | 'yo';
+
+/**
+ * Country, region, and language ISO codes
+ */
+export type LanguageISOCodes = {
+  iso31661?: ISO31661;
+  iso6391?: ISO6391;
+};

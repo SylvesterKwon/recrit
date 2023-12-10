@@ -1,4 +1,5 @@
 import { Comparable } from '../entities/comparable.entity';
+import { LanguageISOCodes } from '../types/iso.types';
 
 /**
  * Base comparable service. All comparable services must extend this class
@@ -12,5 +13,8 @@ export abstract class BaseComparableService {
   /**
    * Get comparable's information for web application
    */
-  abstract getInformation(comparable: Comparable): Promise<any>;
+  abstract getInformation(
+    comparable: Comparable,
+    languageIsoCodes?: LanguageISOCodes,
+  ): Promise<any>;
 }
