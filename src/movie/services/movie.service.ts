@@ -34,11 +34,22 @@ export class MovieService extends BaseComparableService {
       ? this.tmdbUtilService.getPosterUrl(movie.posterPath)
       : undefined;
 
-    const movieTranslation = await this.movieTranslationRepository.findOne({
-      movie: movie,
-      iso31661: languageIsoCodes?.iso31661,
-      iso6391: languageIsoCodes?.iso6391,
-    });
+    let movieTranslation = null;
+
+    if (languageIsoCodes) {
+      if (languageIsoCodes.iso31661) {
+        movieTranslation = await this.movieTranslationRepository.findOne({
+          movie: movie,
+          iso6391: languageIsoCodes?.iso6391,
+          iso31661: languageIsoCodes?.iso31661,
+        });
+      } else {
+        movieTranslation = await this.movieTranslationRepository.findOne({
+          movie: movie,
+          iso6391: languageIsoCodes?.iso6391,
+        });
+      }
+    }
 
     console.log(movieTranslation);
 

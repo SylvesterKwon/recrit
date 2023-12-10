@@ -12,7 +12,7 @@ export class MovieSyncApplication {
     private movieSyncService: MovieSyncService,
   ) {
     // TODO: 테스트용 임시 코드, 삭제 필요
-    // this.syncMovieGenres();
+    this.syncMovieGenres();
     // delay(1000);
     // this.syncAllMovies();
   }
@@ -47,6 +47,12 @@ export class MovieSyncApplication {
    */
   @Transactional()
   async syncMovieGenres() {
-    await Promise.all([this.movieSyncService.syncMovieGenresByLanguage('en')]);
+    await Promise.all([
+      this.movieSyncService.syncMovieGenresByLanguage('en'),
+      this.movieSyncService.syncMovieGenresByLanguage('ko'),
+      this.movieSyncService.syncMovieGenresByLanguage('av'),
+      this.movieSyncService.syncMovieGenresByLanguage('de'),
+      this.movieSyncService.syncMovieGenresByLanguage('cn'),
+    ]);
   }
 }

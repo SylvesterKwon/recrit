@@ -32,7 +32,8 @@ export class MovieTranslationRepository extends EntityRepository<MovieTranslatio
         }
       },
     );
-
     movie.translations.set(newMovieTranslations);
+
+    return newMovieTranslations;
   }
 }

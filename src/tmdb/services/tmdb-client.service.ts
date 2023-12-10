@@ -109,8 +109,8 @@ export class TmdbClientService {
       throw new Error('No genres found');
     }
     const tmdbMovieGenresData: WithRequiredProps<
-      EntityData<MovieGenre>,
-      ['tmdbId', 'name']
+      RequiredEntityData<MovieGenre>,
+      ['tmdbId']
     >[] = res.genres
       .filter((genre): genre is { id: number; name: string } =>
         Boolean(genre.id && genre.name),

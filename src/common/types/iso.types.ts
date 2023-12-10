@@ -446,6 +446,6 @@ export type ISO6391 =
  * Country, region, and language ISO codes
  */
 export type LanguageISOCodes = {
+  iso6391: ISO6391;
   iso31661?: ISO31661;
-  iso6391?: ISO6391;
 };
