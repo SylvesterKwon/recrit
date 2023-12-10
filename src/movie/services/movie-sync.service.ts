@@ -8,6 +8,7 @@ import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
+import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 
 @Injectable()
 export class MovieSyncService {
@@ -16,6 +17,7 @@ export class MovieSyncService {
     private movieRepository: MovieRepository,
     private movieGenreRepository: MovieGenreRepository,
     private movieTranslationRepository: MovieTranslationRepository,
+    private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private graphRepository: GraphRepository,
   ) {}
 
@@ -103,15 +105,25 @@ export class MovieSyncService {
     }
   }
 
-  async syncMovieGenresByLanguage(language: ISO6391) {
-    const tmdbMovieGenresData = await this.tmdbClientService.getAllMovieGenres(
-      language,
-    );
+  async syncMovieGenresByLanguage(iso6391: ISO6391) {
+    // TODO: Add sync failure handling
+    const tmdbMovieGenreDataList =
+      await this.tmdbClientService.getAllMovieGenres(iso6391);
 
-    await Promise.all(
-      tmdbMovieGenresData.map((tmdbMovieGenreData) => {
-        return this.movieGenreRepository.upsert(tmdbMovieGenreData);
-      }),
+    if (iso6391 === 'en') {
+      await Promise.all(
+        tmdbMovieGenreDataList.map((tmdbMovieGenreData) => {
+          return this.movieGenreRepository.upsert(tmdbMovieGenreData);
+        }),
+      );
+    }
+
+    await this.movieGenreTranslationRepository.upsertManyByIso6391(
+      iso6391,
+      tmdbMovieGenreDataList.map((tmdbMovieGenreData) => ({
+        name: tmdbMovieGenreData.name,
+        tmdbId: tmdbMovieGenreData.tmdbId,
+      })),
     );
   }
 }

@@ -47,6 +47,12 @@ export class MovieSyncApplication {
    */
   @Transactional()
   async syncMovieGenres() {
-    await Promise.all([this.movieSyncService.syncMovieGenresByLanguage('en')]);
+    await Promise.all([
+      this.movieSyncService.syncMovieGenresByLanguage('en'),
+      this.movieSyncService.syncMovieGenresByLanguage('ko'),
+      this.movieSyncService.syncMovieGenresByLanguage('av'),
+      this.movieSyncService.syncMovieGenresByLanguage('de'),
+      this.movieSyncService.syncMovieGenresByLanguage('cn'),
+    ]);
   }
 }

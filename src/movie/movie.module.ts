@@ -8,12 +8,13 @@ import { Movie } from './entities/movie.entity';
 import { GraphModule } from 'src/graph/graph.module';
 import { MovieService } from './services/movie.service';
 import { MovieTranslation } from './entities/movie-translation.entity';
+import { MovieGenreTranslation } from './entities/movie-genre-translation.entity';
 
 @Module({
   imports: [
     TmdbModule,
     MikroOrmModule.forFeature({
-      entities: [Movie, MovieGenre, MovieTranslation],
+      entities: [Movie, MovieGenre, MovieTranslation, MovieGenreTranslation],
     }),
     GraphModule,
   ],
