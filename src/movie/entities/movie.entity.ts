@@ -8,7 +8,7 @@ import {
   Unique,
   t,
 } from '@mikro-orm/core';
-import { MovieRepository } from '../movie.repository';
+import { MovieRepository } from '../repositories/movie.repository';
 import { MovieStatus } from '../types/movie.types';
 import { Comparable } from 'src/common/entities/comparable.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MovieSyncService } from './movie-sync.service';
+import { MovieSyncService } from './services/movie-sync.service';
 import { MikroORM } from '@mikro-orm/core';
 import { ISO6391 } from 'src/common/types/iso.types';
 import { Transactional } from 'src/common/decorators/transactional.decorator';

@@ -1,7 +1,7 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { ComparableType } from './types/comparable.types';
+import { ComparableType } from '../types/comparable.types';
 import { EntityManager } from '@mikro-orm/core';
-import { MovieService } from 'src/movie/movie.service';
+import { MovieService } from 'src/movie/services/movie.service';
 import { BaseComparableService } from 'src/common/services/base-comparable.service';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
 import { LanguageISOCodes } from 'src/common/types/iso.types';

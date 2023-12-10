@@ -5,7 +5,7 @@ import {
   TmdbPosterSize,
   TmdbProfileSize,
   TmdbStillSize,
-} from './types/tmdb.types';
+} from '../types/tmdb.types';
 
 @Injectable()
 export class TmdbUtilService {

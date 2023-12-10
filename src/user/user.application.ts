@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MikroORM } from '@mikro-orm/core';
-import { UserService } from './user.service';
-import { AuthService } from './auth.service';
+import { UserService } from './services/user.service';
+import { AuthService } from './services/auth.service';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
 import { UserRepository } from './repositories/user.repository';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';

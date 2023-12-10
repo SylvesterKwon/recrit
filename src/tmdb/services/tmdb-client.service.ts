@@ -13,7 +13,7 @@ import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
 import {
   MovieTranslationsResponseWithTagline,
   TmdbMovieIdResponse,
-} from './types/tmdb-client.types';
+} from '../types/tmdb-client.types';
 import { EntityData, RequiredEntityData } from '@mikro-orm/core';
 import {
   WithRequiredProp,

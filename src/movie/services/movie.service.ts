@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { BaseComparableService } from 'src/common/services/base-comparable.service';
-import { Movie } from './entities/movie.entity';
-import { MovieInformation } from './types/movie.types';
-import { MovieRepository } from './movie.repository';
-import { TmdbUtilService } from 'src/tmdb/tmdb-util.service';
+import { Movie } from '../entities/movie.entity';
+import { MovieInformation } from '../types/movie.types';
+import { MovieRepository } from '../repositories/movie.repository';
+import { TmdbUtilService } from 'src/tmdb/services/tmdb-util.service';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
-import { MovieTranslationRepository } from './movie-translation.repository';
+import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 
 @Injectable()
 export class MovieService extends BaseComparableService {

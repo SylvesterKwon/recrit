@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SignUpDto } from './dto/sign-up.dto';
-import { User } from './entities/user.entity';
+import { SignUpDto } from '../dto/sign-up.dto';
+import { User } from '../entities/user.entity';
 import bcrypt from 'bcrypt';
-import { UserRepository } from './repositories/user.repository';
-import { PermissionRepository } from './repositories/permission.repository';
+import { UserRepository } from '../repositories/user.repository';
+import { PermissionRepository } from '../repositories/permission.repository';
 import {
   EmailAlreadyExistsException,
   UsernameAlreadyExistsException,
 } from 'src/common/exceptions/user.exception';
-import { GraphRepository } from 'src/graph/graph.repository';
+import { GraphRepository } from 'src/graph/repositories/graph.repository';
 
 @Injectable()
 export class UserService {

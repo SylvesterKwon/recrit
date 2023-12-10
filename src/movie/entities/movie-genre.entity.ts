@@ -6,7 +6,7 @@ import {
   Unique,
 } from '@mikro-orm/core';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
-import { MovieGenreRepository } from '../movie-genre.repository';
+import { MovieGenreRepository } from '../repositories/movie-genre.repository';
 import { Movie } from './movie.entity';
 
 @Entity({ customRepository: () => MovieGenreRepository })

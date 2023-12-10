@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { TmdbClientService } from 'src/tmdb/tmdb-client.service';
-import { MovieGenreRepository } from './movie-genre.repository';
+import { TmdbClientService } from 'src/tmdb/services/tmdb-client.service';
+import { MovieGenreRepository } from '../repositories/movie-genre.repository';
 import dayjs from 'dayjs';
-import { MovieRepository } from './movie.repository';
+import { MovieRepository } from '../repositories/movie.repository';
 import { ISO6391 } from 'src/common/types/iso.types';
 import { delay } from 'src/common/utils/delay';
-import { GraphRepository } from 'src/graph/graph.repository';
+import { GraphRepository } from 'src/graph/repositories/graph.repository';
 import { ComparableType } from 'src/comparable/types/comparable.types';
-import { MovieTranslationRepository } from './movie-translation.repository';
+import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 
 @Injectable()
 export class MovieSyncService {

@@ -1,7 +1,7 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { MovieTranslation } from './entities/movie-translation.entity';
+import { MovieTranslation } from '../entities/movie-translation.entity';
 import { RequiredEntityData } from '@mikro-orm/core';
-import { Movie } from './entities/movie.entity';
+import { Movie } from '../entities/movie.entity';
 
 export class MovieTranslationRepository extends EntityRepository<MovieTranslation> {
   async upsertManyByMovieAndIsoCodes(

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
-import { ComparableProxyService } from './comparable-proxy.service';
+import { ComparableProxyService } from './services/comparable-proxy.service';
 import { InvalidComparableTypeException } from 'src/common/exceptions/comparable.exception';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 

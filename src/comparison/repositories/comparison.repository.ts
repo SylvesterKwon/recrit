@@ -1,5 +1,5 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { Comparison } from './entities/comparison.entity';
+import { Comparison } from '../entities/comparison.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { User } from 'src/user/entities/user.entity';
 

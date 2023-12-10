@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { GraphModule } from 'src/graph/graph.module';
-import { ComparisonService } from './comparison.service';
+import { ComparisonService } from './services/comparison.service';
 import { ComparisonApplication } from './comparison.application';
 import { Comparison } from './entities/comparison.entity';
 import { ComparableModule } from 'src/comparable/comparable.module';

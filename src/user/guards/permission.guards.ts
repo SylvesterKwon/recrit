@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { Reflector } from '@nestjs/core';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
 
 @Injectable()

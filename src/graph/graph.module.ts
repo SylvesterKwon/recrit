@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GraphConstraintService } from './graph-constraint.service';
-import { GraphRepository } from './graph.repository';
+import { GraphConstraintService } from './services/graph-constraint.service';
+import { GraphRepository } from './repositories/graph.repository';
 
 @Module({
   imports: [],

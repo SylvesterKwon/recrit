@@ -1,7 +1,7 @@
 import { Entity, ManyToOne, Property } from '@mikro-orm/core';
 import { Movie } from './movie.entity';
 import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
-import { MovieTranslationRepository } from '../movie-translation.repository';
+import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 
 @Entity({ customRepository: () => MovieTranslationRepository })

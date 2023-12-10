@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
-import { ComparisonService } from './comparison.service';
+import { ComparisonService } from './services/comparison.service';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { ComparisonVerdict } from './entities/comparison.entity';
-import { ComparableProxyService } from 'src/comparable/comparable-proxy.service';
+import { ComparableProxyService } from 'src/comparable/services/comparable-proxy.service';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';

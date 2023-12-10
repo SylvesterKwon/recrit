@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { BaseExceptionFilter } from './filters/exception.filter';
+import { BaseExceptionFilter } from './common/filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
