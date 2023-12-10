@@ -4,6 +4,7 @@ import { EntityManager } from '@mikro-orm/core';
 import { MovieService } from 'src/movie/movie.service';
 import { BaseComparableService } from 'src/common/services/base-comparable.service';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
+import { LanguageISOCodes } from 'src/common/types/iso.types';
 
 /**
  * This service is responsible for proxying the comparable service
@@ -28,11 +29,16 @@ export class ComparableProxyService {
     return await this.em.findOne(comparableService.relatedEntity, id);
   }
 
-  async getComparableInformation(comparableType: ComparableType, id: number) {
+  async getComparableInformation(
+    comparableType: ComparableType,
+    id: number,
+    languageIsoCodes?: LanguageISOCodes,
+  ) {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, id);
     if (!comparable) throw new ComparableNotFoundException();
 
-    return await comparableService.getInformation(comparable);
+    // TODO: Add if statement for comparable that doesn't support translation
+    return await comparableService.getInformation(comparable, languageIsoCodes);
   }
 }
