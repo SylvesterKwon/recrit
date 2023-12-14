@@ -15,11 +15,21 @@ export class ComparableNotFoundException extends ComparableException {
 
 export class InvalidComparableTypeException extends ComparableException {
   constructor() {
-    super(ComparableErrorCode.COMPARABLE_NOT_FOUND, HttpStatus.BAD_REQUEST);
+    super(ComparableErrorCode.INVALID_COMPARABLE_TYPE, HttpStatus.BAD_REQUEST);
+  }
+}
+
+export class ComparableAlreadyConsumedException extends ComparableException {
+  constructor() {
+    super(
+      ComparableErrorCode.COMPARABLE_ALREADY_CONSUMED,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
 
 export enum ComparableErrorCode {
   COMPARABLE_NOT_FOUND = 'COMPARABLE_NOT_FOUND',
   INVALID_COMPARABLE_TYPE = 'INVALID_COMPARABLE_TYPE',
+  COMPARABLE_ALREADY_CONSUMED = 'COMPARABLE_ALREADY_CONSUMED',
 }

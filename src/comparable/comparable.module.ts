@@ -5,9 +5,13 @@ import { ComparableProxyService } from './services/comparable-proxy.service';
 import { ComparableController } from './comparable.controller';
 import { ComparableApplication } from './comparable.application';
 import { MovieModule } from 'src/movie/movie.module';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports: [MikroOrmModule.forFeature({ entities: [Movie] }), MovieModule],
+  imports: [
+    MikroOrmModule.forFeature({ entities: [User, Movie] }),
+    MovieModule,
+  ],
   providers: [ComparableProxyService, ComparableApplication],
   controllers: [ComparableController],
   exports: [ComparableProxyService],
