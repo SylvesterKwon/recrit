@@ -15,6 +15,7 @@ import { ComparableType } from 'src/comparable/types/comparable.types';
 import { MovieGenre } from './movie-genre.entity';
 import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
 import { MovieTranslation } from './movie-translation.entity';
+import { User } from 'src/user/entities/user.entity';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
 
@@ -97,4 +98,7 @@ export class Movie extends Comparable {
 
   @Property({ type: ArrayType })
   spokenLanguageCodes: ISO6391[];
+
+  @ManyToMany(() => User, (user) => user.consumedMovies)
+  consumedUsers = new Collection<User>(this);
 }
