@@ -4,6 +4,10 @@ import { Language } from 'src/common/decorators/language.decorator';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { UserId } from 'src/common/decorators/user.decorator';
 import { AuthenticationRequired } from 'src/common/decorators/auth.decorator';
+import {
+  ConsumeComparableDto,
+  GetComparableInformationDto,
+} from './comparable.dto';
 
 @Controller('comparable')
 export class ComparableController {
@@ -11,13 +15,12 @@ export class ComparableController {
 
   @Get(':comparableType/:comparableId')
   async getComparableInforamtion(
-    @Param('comparableType') comparableType: string,
-    @Param('comparableId') comparableId: number,
+    @Param() dto: GetComparableInformationDto,
     @Language() language?: LanguageISOCodes,
   ) {
     return await this.comparableApplication.getComparableInforamtion(
-      comparableType,
-      comparableId,
+      dto.comparableType,
+      dto.comparableId,
       language,
     );
   }
@@ -26,13 +29,12 @@ export class ComparableController {
   @Post(':comparableType/:comparableId/consume')
   async consumeComparable(
     @UserId() userId: number,
-    @Param('comparableType') comparableType: string,
-    @Param('comparableId') comparableId: number,
+    @Param() dto: ConsumeComparableDto,
   ) {
     return await this.comparableApplication.consumeComparable(
       userId,
-      comparableType,
-      comparableId,
+      dto.comparableType,
+      dto.comparableId,
     );
   }
 }
