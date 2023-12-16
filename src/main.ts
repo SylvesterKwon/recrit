@@ -5,6 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BaseExceptionFilter } from './common/filters/exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import { ValidationFailedException } from './common/exceptions/validation-failed.exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,8 +13,8 @@ async function bootstrap() {
   // Pipe config
   app.useGlobalPipes(
     new ValidationPipe({
-      // reference: https://docs.nestjs.com/techniques/validation#disable-detailed-errors
-      disableErrorMessages: process.env.ENVIRONMENT === 'prd',
+      exceptionFactory: (validationErrors) =>
+        new ValidationFailedException(validationErrors),
     }),
   );
 
