@@ -4,9 +4,18 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BaseExceptionFilter } from './common/filters/exception.filter';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Pipe config
+  app.useGlobalPipes(
+    new ValidationPipe({
+      // reference: https://docs.nestjs.com/techniques/validation#disable-detailed-errors
+      disableErrorMessages: process.env.ENVIRONMENT === 'prd',
+    }),
+  );
 
   // Filter config
   app.useGlobalFilters(new BaseExceptionFilter());
