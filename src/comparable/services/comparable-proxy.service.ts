@@ -14,10 +14,6 @@ import { User } from 'src/user/entities/user.entity';
 export class ComparableProxyService {
   constructor(private em: EntityManager, private movieService: MovieService) {}
 
-  isValidComparableType(type: string): type is ComparableType {
-    return Object.values(ComparableType).includes(type as ComparableType);
-  }
-
   private getComparableService(type: ComparableType): BaseComparableService {
     if (type === ComparableType.MOVIE) return this.movieService;
     // else if ...
@@ -53,5 +49,17 @@ export class ComparableProxyService {
     if (!comparable) throw new ComparableNotFoundException();
 
     return comparableService.consume(user, comparable);
+  }
+
+  async unconsumeComparable(
+    user: User,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    const comparable = await this.getComparable(comparableType, comparableId);
+    if (!comparable) throw new ComparableNotFoundException();
+
+    return comparableService.unconsume(user, comparable);
   }
 }

@@ -23,4 +23,9 @@ export abstract class BaseComparableService {
    * Mark comparable as consumed by user
    */
   abstract consume(user: User, comparable: Comparable): Promise<void>;
+
+  /**
+   * Unmark comparable as consumed by user
+   */
+  abstract unconsume(user: User, comparable: Comparable): Promise<void>;
 }

@@ -76,8 +76,8 @@ export class GraphRepository {
     const comparableNode = `(c:${comparableType} {id: ${id}})`;
     const userNode = `(u:user {id: ${user.id}})`;
     await this.neo4jService.write(`
-      MATCH ${comparableNode}-[consume:CONSUMED]->${userNode}
-      DELETE consume
+      MATCH ${userNode}-[consumed:CONSUMED]->${comparableNode}
+      DELETE consumed
     `);
   }
 
