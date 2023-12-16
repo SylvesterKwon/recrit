@@ -4,10 +4,7 @@ import { Language } from 'src/common/decorators/language.decorator';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { UserId } from 'src/common/decorators/user.decorator';
 import { AuthenticationRequired } from 'src/common/decorators/auth.decorator';
-import {
-  ConsumeComparableDto,
-  GetComparableInformationDto,
-} from './comparable.dto';
+import { ComparableDto } from './comparable.dto';
 
 @Controller('comparable')
 export class ComparableController {
@@ -15,7 +12,7 @@ export class ComparableController {
 
   @Get(':comparableType/:comparableId')
   async getComparableInforamtion(
-    @Param() dto: GetComparableInformationDto,
+    @Param() dto: ComparableDto,
     @Language() language?: LanguageISOCodes,
   ) {
     return await this.comparableApplication.getComparableInforamtion(
@@ -29,9 +26,22 @@ export class ComparableController {
   @Post(':comparableType/:comparableId/consume')
   async consumeComparable(
     @UserId() userId: number,
-    @Param() dto: ConsumeComparableDto,
+    @Param() dto: ComparableDto,
   ) {
     return await this.comparableApplication.consumeComparable(
+      userId,
+      dto.comparableType,
+      dto.comparableId,
+    );
+  }
+
+  @AuthenticationRequired()
+  @Post(':comparableType/:comparableId/unconsume')
+  async unconsumeComparable(
+    @UserId() userId: number,
+    @Param() dto: ComparableDto,
+  ) {
+    return await this.comparableApplication.unconsumeComparable(
       userId,
       dto.comparableType,
       dto.comparableId,

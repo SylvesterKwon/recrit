@@ -9,7 +9,10 @@ import { MovieTranslationRepository } from '../repositories/movie-translation.re
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
-import { ComparableAlreadyConsumedException } from 'src/common/exceptions/comparable.exception';
+import {
+  ComparableAlreadyConsumedException,
+  ComparableNotConsumedException,
+} from 'src/common/exceptions/comparable.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 
@@ -107,15 +110,29 @@ export class MovieService extends BaseComparableService {
   }
 
   async consume(user: User, movie: Movie) {
-    const alreadyConsumed = Boolean(
-      (await movie.consumedUsers.matching({ where: { id: user.id }, limit: 1 }))
-        .length,
-    );
+    await user.consumedMovies.init();
+
+    const alreadyConsumed = user.consumedMovies.contains(movie);
     if (alreadyConsumed) throw new ComparableAlreadyConsumedException();
 
-    movie.consumedUsers.add(user);
+    user.consumedMovies.add(movie);
 
     await this.graphRepository.upsertConsume(
+      user,
+      ComparableType.MOVIE,
+      movie.id,
+    );
+  }
+
+  async unconsume(user: User, movie: Movie) {
+    await user.consumedMovies.init();
+
+    const notConsumed = !user.consumedMovies.contains(movie);
+    if (notConsumed) throw new ComparableNotConsumedException();
+
+    user.consumedMovies.remove(movie);
+
+    await this.graphRepository.deleteConsume(
       user,
       ComparableType.MOVIE,
       movie.id,
