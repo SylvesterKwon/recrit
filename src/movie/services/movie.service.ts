@@ -10,6 +10,8 @@ import { MovieGenreTranslationRepository } from '../repositories/movie-genre-tra
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
 import { ComparableAlreadyConsumedException } from 'src/common/exceptions/comparable.exception';
+import { GraphRepository } from 'src/graph/repositories/graph.repository';
+import { ComparableType } from 'src/comparable/types/comparable.types';
 
 @Injectable()
 export class MovieService extends BaseComparableService {
@@ -18,6 +20,7 @@ export class MovieService extends BaseComparableService {
     private movieTranslationRepository: MovieTranslationRepository,
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private tmdbUtilService: TmdbUtilService,
+    private graphRepository: GraphRepository,
   ) {
     super();
   }
@@ -112,6 +115,10 @@ export class MovieService extends BaseComparableService {
 
     movie.consumedUsers.add(user);
 
-    // TODO: Add graph update
+    await this.graphRepository.upsertConsume(
+      user,
+      ComparableType.MOVIE,
+      movie.id,
+    );
   }
 }
