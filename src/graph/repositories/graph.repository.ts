@@ -49,18 +49,6 @@ export class GraphRepository {
     const secondComparableNode = `(c2:${comparison.comparableType} {id: ${comparison.secondItemId}})`;
     const userId = comparison.user.id;
 
-    console.log(`
-    MATCH ${firstComparableNode}, ${secondComparableNode}
-    OPTIONAL MATCH (c1)-[cmp:BETTER_THAN {user_id: ${userId}}]-(c2)
-    DELETE cmp
-    ${
-      comparison.verdict === ComparisonVerdict.EQUAL
-        ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1), (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // equal
-        : comparison.verdict === ComparisonVerdict.FIRST
-        ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
-        : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
-    }
-  `);
     await this.neo4jService.write(`
       MATCH ${firstComparableNode}, ${secondComparableNode}
       OPTIONAL MATCH (c1)-[cmp:BETTER_THAN {user_id: ${userId}}]-(c2)
@@ -72,6 +60,24 @@ export class GraphRepository {
           ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
           : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
       }
+    `);
+  }
+
+  async upsertConsume(user: User, comparableType: ComparableType, id: number) {
+    const comparableNode = `(c:${comparableType} {id: ${id}})`;
+    const userNode = `(u:user {id: ${user.id}})`;
+    await this.neo4jService.write(`
+      MATCH ${comparableNode}, ${userNode}
+      MERGE (u)-[:CONSUMED]->(c)
+    `);
+  }
+
+  async deleteConsume(user: User, comparableType: ComparableType, id: number) {
+    const comparableNode = `(c:${comparableType} {id: ${id}})`;
+    const userNode = `(u:user {id: ${user.id}})`;
+    await this.neo4jService.write(`
+      MATCH ${comparableNode}-[consume:CONSUMED]->${userNode}
+      DELETE consume
     `);
   }
 
