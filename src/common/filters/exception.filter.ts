@@ -23,6 +23,7 @@ export class BaseExceptionFilter implements ExceptionFilter {
       errorCode: res.errorCode,
       timeStamp: dayjs().toISOString(),
       path: request.url,
+      ...res.extra,
     });
   }
 }

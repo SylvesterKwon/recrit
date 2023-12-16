@@ -1,15 +1,29 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, ValidationError } from '@nestjs/common';
+
+/**
+ * Additional data that can be passed to the `BaseException`.
+ */
+export type BaseExceptionExtra = {
+  validationErrors?: ValidationError[];
+};
 
 /**
  * @description Base exception class for custom exceptions.
  * All custom exceptions should extend this class.
  */
 export class BaseException extends HttpException {
-  errorCode: string; // TODO: rename this as exceptionCode, exception isn't equivalant to error
+  errorCode: string;
+  extra: BaseExceptionExtra;
 
-  constructor(errorCode: string, statusCode: number) {
+  constructor(
+    errorCode: string,
+    statusCode: number,
+    extra?: BaseExceptionExtra,
+  ) {
     const fullErrorCode = ['RECRIT', errorCode].join(':');
     super(fullErrorCode, statusCode);
+
     this.errorCode = fullErrorCode;
+    this.extra = extra ?? {};
   }
 }

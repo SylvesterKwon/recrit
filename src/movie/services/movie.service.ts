@@ -8,6 +8,8 @@ import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
+import { User } from 'src/user/entities/user.entity';
+import { ComparableAlreadyConsumedException } from 'src/common/exceptions/comparable.exception';
 
 @Injectable()
 export class MovieService extends BaseComparableService {
@@ -99,5 +101,17 @@ export class MovieService extends BaseComparableService {
       productionCountryCodes: movie.productionCountryCodes,
       spokenLanguageCodes: movie.spokenLanguageCodes,
     };
+  }
+
+  async consume(user: User, movie: Movie) {
+    const alreadyConsumed = Boolean(
+      (await movie.consumedUsers.matching({ where: { id: user.id }, limit: 1 }))
+        .length,
+    );
+    if (alreadyConsumed) throw new ComparableAlreadyConsumedException();
+
+    movie.consumedUsers.add(user);
+
+    // TODO: Add graph update
   }
 }

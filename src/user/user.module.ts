@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { GraphModule } from 'src/graph/graph.module';
+import { UserRepository } from './repositories/user.repository';
 
 @Module({
   imports: [

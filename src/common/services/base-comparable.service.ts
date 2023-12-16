@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import { Comparable } from '../entities/comparable.entity';
 import { LanguageISOCodes } from '../types/iso.types';
 
@@ -17,4 +18,9 @@ export abstract class BaseComparableService {
     comparable: Comparable,
     languageIsoCodes?: LanguageISOCodes,
   ): Promise<any>;
+
+  /**
+   * Mark comparable as consumed by user
+   */
+  abstract consume(user: User, comparable: Comparable): Promise<void>;
 }
