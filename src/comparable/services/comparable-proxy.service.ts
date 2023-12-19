@@ -62,4 +62,28 @@ export class ComparableProxyService {
 
     return comparableService.unconsume(user, comparable);
   }
+
+  async addToConsumeList(
+    user: User,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    const comparable = await this.getComparable(comparableType, comparableId);
+    if (!comparable) throw new ComparableNotFoundException();
+
+    return comparableService.addToConsumeList(user, comparable);
+  }
+
+  async removeToConsumeList(
+    user: User,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    const comparable = await this.getComparable(comparableType, comparableId);
+    if (!comparable) throw new ComparableNotFoundException();
+
+    return comparableService.removeToConsumeList(user, comparable);
+  }
 }

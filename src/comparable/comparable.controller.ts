@@ -47,4 +47,30 @@ export class ComparableController {
       dto.comparableId,
     );
   }
+
+  @AuthenticationRequired()
+  @Post(':comparableType/:comparableId/add-to-consume-list')
+  async addToConsumeList(
+    @UserId() userId: number,
+    @Param() dto: ComparableDto,
+  ) {
+    return await this.comparableApplication.addToConsumeList(
+      userId,
+      dto.comparableType,
+      dto.comparableId,
+    );
+  }
+
+  @AuthenticationRequired()
+  @Post(':comparableType/:comparableId/remove-to-consume-list')
+  async removeToConsumeList(
+    @UserId() userId: number,
+    @Param() dto: ComparableDto,
+  ) {
+    return await this.comparableApplication.removeToConsumeList(
+      userId,
+      dto.comparableType,
+      dto.comparableId,
+    );
+  }
 }

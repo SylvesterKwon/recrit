@@ -28,8 +28,28 @@ export class ComparableNotConsumedException extends ComparableException {
   }
 }
 
+export class ComparableAlreadyInToConsumeListException extends ComparableException {
+  constructor() {
+    super(
+      ComparableErrorCode.COMPARABLE_ALREADY_IN_TO_CONSUME_LIST,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class ComparableNotInToConsumeListException extends ComparableException {
+  constructor() {
+    super(
+      ComparableErrorCode.COMPARABLE_NOT_IN_TO_CONSUME_LIST,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
 export enum ComparableErrorCode {
   COMPARABLE_NOT_FOUND = 'COMPARABLE_NOT_FOUND',
   COMPARABLE_ALREADY_CONSUMED = 'COMPARABLE_ALREADY_CONSUMED',
   COMPARABLE_NOT_CONSUMED = 'COMPARABLE_NOT_CONSUMED',
+  COMPARABLE_ALREADY_IN_TO_CONSUME_LIST = 'COMPARABLE_ALREADY_IN_TO_CONSUME_LIST',
+  COMPARABLE_NOT_IN_TO_CONSUME_LIST = 'COMPARABLE_NOT_IN_TO_CONSUME_LIST',
 }

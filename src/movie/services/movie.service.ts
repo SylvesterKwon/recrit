@@ -11,6 +11,7 @@ import { MovieGenreTranslation } from '../entities/movie-genre-translation.entit
 import { User } from 'src/user/entities/user.entity';
 import {
   ComparableAlreadyConsumedException,
+  ComparableAlreadyInToConsumeListException,
   ComparableNotConsumedException,
 } from 'src/common/exceptions/comparable.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
@@ -137,5 +138,23 @@ export class MovieService extends BaseComparableService {
       ComparableType.MOVIE,
       movie.id,
     );
+  }
+
+  async addToConsumeList(user: User, movie: Movie) {
+    await user.toConsumeMovieList.init();
+
+    const alreadyAdded = user.toConsumeMovieList.contains(movie);
+    if (alreadyAdded) throw new ComparableAlreadyInToConsumeListException();
+
+    user.toConsumeMovieList.add(movie);
+  }
+
+  async removeToConsumeList(user: User, movie: Movie) {
+    await user.toConsumeMovieList.init();
+
+    const notAdded = !user.toConsumeMovieList.contains(movie);
+    if (notAdded) throw new ComparableNotConsumedException();
+
+    user.toConsumeMovieList.remove(movie);
   }
 }

@@ -28,6 +28,10 @@ export class User extends TimestampedEntity {
   @ManyToOne()
   role?: Ref<Role>;
 
+  // Movie
   @ManyToMany()
   consumedMovies = new Collection<Movie>(this);
+
+  @ManyToMany()
+  toConsumeMovieList = new Collection<Movie>(this);
 }
