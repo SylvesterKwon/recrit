@@ -5,7 +5,10 @@ import { ComparableProxyService } from './services/comparable-proxy.service';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
-import { ComparableType } from './types/comparable.types';
+import {
+  ConsumptionStatusesDto,
+  ComparableType,
+} from './types/comparable.types';
 
 @Injectable()
 export class ComparableApplication {
@@ -100,5 +103,26 @@ export class ComparableApplication {
         comparableId,
       );
     return comparableInformation;
+  }
+
+  @Transactional()
+  async getConsumptionStatuses(
+    userId: number,
+    comparableType: ComparableType,
+    comparableIds: number[],
+  ): Promise<ConsumptionStatusesDto> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new UserNotFoundException();
+
+    const consumptionStatuses =
+      await this.comparableProxyService.getConsumptionStatuses(
+        user,
+        comparableType,
+        comparableIds,
+      );
+    return {
+      comparableType: comparableType,
+      consumptionStatuses,
+    };
   }
 }

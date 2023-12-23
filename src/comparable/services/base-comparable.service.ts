@@ -1,25 +1,44 @@
 import { User } from 'src/user/entities/user.entity';
-import { Comparable } from '../entities/comparable.entity';
-import { LanguageISOCodes } from '../types/iso.types';
-import { Collection, EntityName } from '@mikro-orm/core';
+import { Comparable } from '../../common/entities/comparable.entity';
+import { LanguageISOCodes } from '../../common/types/iso.types';
+import {
+  Collection,
+  EntityName,
+  EntityRepository,
+  MikroORM,
+} from '@mikro-orm/core';
 import {
   ComparableAlreadyConsumedException,
   ComparableAlreadyInToConsumeListException,
   ComparableNotConsumedException,
   ComparableNotInToConsumeListException,
-} from '../exceptions/comparable.exception';
+} from '../../common/exceptions/comparable.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
+import { ConsumptionStatus } from '../types/comparable.types';
 
 /**
  * Base comparable service. All comparable services must extend this class
  */
 export abstract class BaseComparableService<T extends Comparable> {
+  protected abstract orm: MikroORM;
+
   protected abstract graphRepository: GraphRepository;
 
   /**
-   * Get the comparable entity
+   * Comparable entity
    */
   abstract get comparableEntity(): EntityName<T>;
+
+  /**
+   * Comparable repository
+   */
+  get comparableRepository() {
+    // Used type assertion because EntityRepository<T> is not working properly
+    // TODO: fix this to use EntityRepository<T>
+    return this.orm.em.getRepository(
+      this.comparableEntity,
+    ) as unknown as EntityRepository<Comparable>;
+  }
 
   /**
    * Returns the user's consumed comparables collection
@@ -105,6 +124,36 @@ export abstract class BaseComparableService<T extends Comparable> {
     if (notAdded) throw new ComparableNotInToConsumeListException();
 
     userToConsumeComparableList.remove(comparable);
+  }
+
+  async getConsumptionStatuses(
+    user: User,
+    comparableIds: number[],
+  ): Promise<ConsumptionStatus[]> {
+    // if needed, add non-existing comparable handling
+
+    const consumedComparables = await this.comparableRepository.find({
+      id: { $in: comparableIds },
+      consumedUsers: user,
+    });
+    const toConsumeListedComparables = await this.comparableRepository.find({
+      id: { $in: comparableIds },
+      toConsumeListedUsers: user,
+    });
+
+    return comparableIds.map((comparableId) => ({
+      id: comparableId,
+      consumed: Boolean(
+        consumedComparables.find(
+          (comparable) => comparable.id === comparableId,
+        ),
+      ),
+      toConsumeListed: Boolean(
+        toConsumeListedComparables.find(
+          (comparable) => comparable.id === comparableId,
+        ),
+      ),
+    }));
   }
 
   /**

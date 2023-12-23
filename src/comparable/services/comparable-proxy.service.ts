@@ -84,4 +84,13 @@ export class ComparableProxyService {
 
     await comparableService.removeToConsumeList(user, comparable);
   }
+
+  async getConsumptionStatuses(
+    user: User,
+    comparableType: ComparableType,
+    comparableIds: number[],
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    return await comparableService.getConsumptionStatuses(user, comparableIds);
+  }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseComparableService } from 'src/common/services/base-comparable.service';
+import { BaseComparableService } from 'src/comparable/services/base-comparable.service';
 import { Movie } from '../entities/movie.entity';
 import { MovieInformation } from '../types/movie.types';
 import { MovieRepository } from '../repositories/movie.repository';
@@ -10,10 +10,12 @@ import { MovieGenreTranslationRepository } from '../repositories/movie-genre-tra
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
+import { MikroORM } from '@mikro-orm/core';
 
 @Injectable()
 export class MovieService extends BaseComparableService<Movie> {
   constructor(
+    protected orm: MikroORM,
     protected graphRepository: GraphRepository,
     private movieRepository: MovieRepository,
     private movieTranslationRepository: MovieTranslationRepository,
