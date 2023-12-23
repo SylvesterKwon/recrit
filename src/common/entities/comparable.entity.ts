@@ -11,4 +11,6 @@ export abstract class Comparable extends TimestampedEntity {
   abstract get type(): ComparableType;
 
   abstract consumedUsers: Collection<User>;
+
+  abstract toConsumeListedUsers: Collection<User>;
 }

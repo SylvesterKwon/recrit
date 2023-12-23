@@ -2,7 +2,6 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 import { ComparableType } from '../types/comparable.types';
 import { EntityManager } from '@mikro-orm/core';
 import { MovieService } from 'src/movie/services/movie.service';
-import { BaseComparableService } from 'src/common/services/base-comparable.service';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
 import { User } from 'src/user/entities/user.entity';
@@ -14,7 +13,7 @@ import { User } from 'src/user/entities/user.entity';
 export class ComparableProxyService {
   constructor(private em: EntityManager, private movieService: MovieService) {}
 
-  private getComparableService(type: ComparableType): BaseComparableService {
+  private getComparableService(type: ComparableType) {
     if (type === ComparableType.MOVIE) return this.movieService;
     // else if ...
     else
@@ -23,7 +22,12 @@ export class ComparableProxyService {
 
   async getComparable(comparableType: ComparableType, id: number) {
     const comparableService = this.getComparableService(comparableType);
-    return await this.em.findOne(comparableService.relatedEntity, id);
+    const comparable = await this.em.findOne(
+      comparableService.comparableEntity,
+      id,
+    );
+    if (!comparable) throw new ComparableNotFoundException();
+    return comparable;
   }
 
   async getComparableInformation(
@@ -33,9 +37,7 @@ export class ComparableProxyService {
   ) {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
-    if (!comparable) throw new ComparableNotFoundException();
 
-    // TODO: Add if statement for comparable that doesn't support translation
     return await comparableService.getInformation(comparable, languageIsoCodes);
   }
 
@@ -46,9 +48,8 @@ export class ComparableProxyService {
   ) {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
-    if (!comparable) throw new ComparableNotFoundException();
 
-    return comparableService.consume(user, comparable);
+    await comparableService.consume(user, comparable);
   }
 
   async unconsumeComparable(
@@ -58,8 +59,29 @@ export class ComparableProxyService {
   ) {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
-    if (!comparable) throw new ComparableNotFoundException();
 
-    return comparableService.unconsume(user, comparable);
+    await comparableService.unconsume(user, comparable);
+  }
+
+  async addToConsumeList(
+    user: User,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    const comparable = await this.getComparable(comparableType, comparableId);
+
+    await comparableService.addToConsumeList(user, comparable);
+  }
+
+  async removeToConsumeList(
+    user: User,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    const comparable = await this.getComparable(comparableType, comparableId);
+
+    await comparableService.removeToConsumeList(user, comparable);
   }
 }

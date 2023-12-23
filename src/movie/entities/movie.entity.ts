@@ -101,4 +101,7 @@ export class Movie extends Comparable {
 
   @ManyToMany(() => User, (user) => user.consumedMovies)
   consumedUsers = new Collection<User>(this);
+
+  @ManyToMany(() => User, (user) => user.consumedMovies)
+  toConsumeListedUsers = new Collection<User>(this);
 }

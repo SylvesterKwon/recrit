@@ -65,4 +65,40 @@ export class ComparableApplication {
       );
     return comparableInformation;
   }
+
+  @Transactional()
+  async addToConsumeList(
+    userId: number,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new UserNotFoundException();
+
+    const comparableInformation =
+      await this.comparableProxyService.addToConsumeList(
+        user,
+        comparableType,
+        comparableId,
+      );
+    return comparableInformation;
+  }
+
+  @Transactional()
+  async removeToConsumeList(
+    userId: number,
+    comparableType: ComparableType,
+    comparableId: number,
+  ) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new UserNotFoundException();
+
+    const comparableInformation =
+      await this.comparableProxyService.removeToConsumeList(
+        user,
+        comparableType,
+        comparableId,
+      );
+    return comparableInformation;
+  }
 }
