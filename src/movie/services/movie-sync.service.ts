@@ -54,8 +54,8 @@ export class MovieSyncService {
           goodChunkCount++;
           break;
         }
-      } catch (err) {
-        errorLog.push(err);
+      } catch (error) {
+        errorLog.push(error);
         badChunkCount++;
       }
       await delay(intervalMilliseconds);
@@ -98,10 +98,10 @@ export class MovieSyncService {
       );
 
       return movie;
-    } catch (err) {
+    } catch (error) {
       // TODO: add sync error log table
       console.log('error tmdb id: ', tmdbId);
-      console.error(err);
+      console.error(error);
     }
   }
 

@@ -9,28 +9,29 @@ import { MovieTranslationRepository } from '../repositories/movie-translation.re
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
-import {
-  ComparableAlreadyConsumedException,
-  ComparableAlreadyInToConsumeListException,
-  ComparableNotConsumedException,
-} from 'src/common/exceptions/comparable.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
-import { ComparableType } from 'src/comparable/types/comparable.types';
 
 @Injectable()
-export class MovieService extends BaseComparableService {
+export class MovieService extends BaseComparableService<Movie> {
   constructor(
+    protected graphRepository: GraphRepository,
     private movieRepository: MovieRepository,
     private movieTranslationRepository: MovieTranslationRepository,
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private tmdbUtilService: TmdbUtilService,
-    private graphRepository: GraphRepository,
   ) {
     super();
   }
-
-  get relatedEntity() {
+  get comparableEntity() {
     return Movie;
+  }
+
+  getUserConsumedComparables(user: User) {
+    return user.consumedMovies;
+  }
+
+  getUserToConsumeComparableList(user: User) {
+    return user.toConsumeMovieList;
   }
 
   async getInformation(
@@ -108,53 +109,5 @@ export class MovieService extends BaseComparableService {
       productionCountryCodes: movie.productionCountryCodes,
       spokenLanguageCodes: movie.spokenLanguageCodes,
     };
-  }
-
-  async consume(user: User, movie: Movie) {
-    await user.consumedMovies.init();
-
-    const alreadyConsumed = user.consumedMovies.contains(movie);
-    if (alreadyConsumed) throw new ComparableAlreadyConsumedException();
-
-    user.consumedMovies.add(movie);
-
-    await this.graphRepository.upsertConsume(
-      user,
-      ComparableType.MOVIE,
-      movie.id,
-    );
-  }
-
-  async unconsume(user: User, movie: Movie) {
-    await user.consumedMovies.init();
-
-    const notConsumed = !user.consumedMovies.contains(movie);
-    if (notConsumed) throw new ComparableNotConsumedException();
-
-    user.consumedMovies.remove(movie);
-
-    await this.graphRepository.deleteConsume(
-      user,
-      ComparableType.MOVIE,
-      movie.id,
-    );
-  }
-
-  async addToConsumeList(user: User, movie: Movie) {
-    await user.toConsumeMovieList.init();
-
-    const alreadyAdded = user.toConsumeMovieList.contains(movie);
-    if (alreadyAdded) throw new ComparableAlreadyInToConsumeListException();
-
-    user.toConsumeMovieList.add(movie);
-  }
-
-  async removeToConsumeList(user: User, movie: Movie) {
-    await user.toConsumeMovieList.init();
-
-    const notAdded = !user.toConsumeMovieList.contains(movie);
-    if (notAdded) throw new ComparableNotConsumedException();
-
-    user.toConsumeMovieList.remove(movie);
   }
 }
