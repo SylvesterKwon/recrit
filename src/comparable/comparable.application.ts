@@ -42,13 +42,13 @@ export class ComparableApplication {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const comparableInformation =
+    const comsumptionStatus =
       await this.comparableProxyService.consumeComparable(
         user,
         comparableType,
         comparableId,
       );
-    return comparableInformation;
+    return comsumptionStatus;
   }
 
   @Transactional()
@@ -60,13 +60,13 @@ export class ComparableApplication {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const comparableInformation =
+    const comsumptionStatus =
       await this.comparableProxyService.unconsumeComparable(
         user,
         comparableType,
         comparableId,
       );
-    return comparableInformation;
+    return comsumptionStatus;
   }
 
   @Transactional()
@@ -78,13 +78,13 @@ export class ComparableApplication {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const comparableInformation =
+    const comsumptionStatus =
       await this.comparableProxyService.addToConsumeList(
         user,
         comparableType,
         comparableId,
       );
-    return comparableInformation;
+    return comsumptionStatus;
   }
 
   @Transactional()
@@ -96,13 +96,13 @@ export class ComparableApplication {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const comparableInformation =
+    const comsumptionStatus =
       await this.comparableProxyService.removeToConsumeList(
         user,
         comparableType,
         comparableId,
       );
-    return comparableInformation;
+    return comsumptionStatus;
   }
 
   @Transactional()
@@ -121,7 +121,6 @@ export class ComparableApplication {
         comparableIds,
       );
     return {
-      comparableType: comparableType,
       consumptionStatuses,
     };
   }
