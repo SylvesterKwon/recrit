@@ -3,7 +3,7 @@ import { Comparable } from '../../common/entities/comparable.entity';
 import { LanguageISOCodes } from '../../common/types/iso.types';
 import {
   Collection,
-  EntityName,
+  EntityClass,
   EntityRepository,
   MikroORM,
 } from '@mikro-orm/core';
@@ -14,7 +14,7 @@ import {
   ComparableNotInToConsumeListException,
 } from '../../common/exceptions/comparable.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
-import { ConsumptionStatus } from '../types/comparable.types';
+import { ComparableType, ConsumptionStatus } from '../types/comparable.types';
 
 /**
  * Base comparable service. All comparable services must extend this class
@@ -27,7 +27,11 @@ export abstract class BaseComparableService<T extends Comparable> {
   /**
    * Comparable entity
    */
-  abstract get comparableEntity(): EntityName<T>;
+  abstract get comparableEntity(): EntityClass<T>;
+
+  get comparableEntityName(): ComparableType {
+    return this.comparableEntity.name.toLowerCase() as ComparableType;
+  }
 
   /**
    * Comparable repository
@@ -53,7 +57,7 @@ export abstract class BaseComparableService<T extends Comparable> {
   /**
    * Mark comparable as consumed by user
    */
-  async consume(user: User, comparable: T): Promise<void> {
+  async consume(user: User, comparable: T): Promise<ConsumptionStatus> {
     const userConsumedComparables = this.getUserConsumedComparables(user);
     await userConsumedComparables.init();
 
@@ -77,12 +81,15 @@ export abstract class BaseComparableService<T extends Comparable> {
       comparable.type,
       comparable.id,
     );
+
+    await this.orm.em.flush();
+    return await this.getConsumptionStatus(user, comparable.id);
   }
 
   /**
    * Unmark comparable as consumed by user
    */
-  async unconsume(user: User, comparable: T): Promise<void> {
+  async unconsume(user: User, comparable: T): Promise<ConsumptionStatus> {
     const userConsumedComparables = this.getUserConsumedComparables(user);
     await userConsumedComparables.init();
 
@@ -96,12 +103,18 @@ export abstract class BaseComparableService<T extends Comparable> {
       comparable.type,
       comparable.id,
     );
+
+    await this.orm.em.flush();
+    return await this.getConsumptionStatus(user, comparable.id);
   }
 
   /**
    * Add comparable to to-consume-list
    */
-  async addToConsumeList(user: User, comparable: T): Promise<void> {
+  async addToConsumeList(
+    user: User,
+    comparable: T,
+  ): Promise<ConsumptionStatus> {
     const userToConsumeComparableList =
       this.getUserToConsumeComparableList(user);
     await userToConsumeComparableList.init();
@@ -110,12 +123,18 @@ export abstract class BaseComparableService<T extends Comparable> {
     if (alreadyAdded) throw new ComparableAlreadyInToConsumeListException();
 
     userToConsumeComparableList.add(comparable);
+
+    await this.orm.em.flush();
+    return await this.getConsumptionStatus(user, comparable.id);
   }
 
   /**
    * Remove comparable from to-consume-list
    */
-  async removeToConsumeList(user: User, comparable: T): Promise<void> {
+  async removeToConsumeList(
+    user: User,
+    comparable: T,
+  ): Promise<ConsumptionStatus> {
     const userToConsumeComparableList =
       this.getUserToConsumeComparableList(user);
     await userToConsumeComparableList.init();
@@ -124,6 +143,35 @@ export abstract class BaseComparableService<T extends Comparable> {
     if (notAdded) throw new ComparableNotInToConsumeListException();
 
     userToConsumeComparableList.remove(comparable);
+
+    await this.orm.em.flush();
+    return await this.getConsumptionStatus(user, comparable.id);
+  }
+
+  async getConsumptionStatus(
+    user: User,
+    comparableId: number,
+  ): Promise<ConsumptionStatus> {
+    // if needed, add non-existing comparable handling
+    const consumed = Boolean(
+      await this.comparableRepository.findOne({
+        id: comparableId,
+        consumedUsers: user,
+      }),
+    );
+    const toConsumeListed = Boolean(
+      await this.comparableRepository.findOne({
+        id: comparableId,
+        toConsumeListedUsers: user,
+      }),
+    );
+
+    return {
+      comparableId: comparableId,
+      comparableType: this.comparableEntityName,
+      consumed: consumed,
+      toConsumeListed: toConsumeListed,
+    };
   }
 
   async getConsumptionStatuses(
@@ -142,7 +190,8 @@ export abstract class BaseComparableService<T extends Comparable> {
     });
 
     return comparableIds.map((comparableId) => ({
-      id: comparableId,
+      comparableId: comparableId,
+      comparableType: this.comparableEntityName,
       consumed: Boolean(
         consumedComparables.find(
           (comparable) => comparable.id === comparableId,

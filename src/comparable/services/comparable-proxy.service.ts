@@ -1,5 +1,5 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { ComparableType } from '../types/comparable.types';
+import { ComparableType, ConsumptionStatus } from '../types/comparable.types';
 import { EntityManager } from '@mikro-orm/core';
 import { MovieService } from 'src/movie/services/movie.service';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
@@ -45,44 +45,44 @@ export class ComparableProxyService {
     user: User,
     comparableType: ComparableType,
     comparableId: number,
-  ) {
+  ): Promise<ConsumptionStatus> {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
 
-    await comparableService.consume(user, comparable);
+    return await comparableService.consume(user, comparable);
   }
 
   async unconsumeComparable(
     user: User,
     comparableType: ComparableType,
     comparableId: number,
-  ) {
+  ): Promise<ConsumptionStatus> {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
 
-    await comparableService.unconsume(user, comparable);
+    return await comparableService.unconsume(user, comparable);
   }
 
   async addToConsumeList(
     user: User,
     comparableType: ComparableType,
     comparableId: number,
-  ) {
+  ): Promise<ConsumptionStatus> {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
 
-    await comparableService.addToConsumeList(user, comparable);
+    return await comparableService.addToConsumeList(user, comparable);
   }
 
   async removeToConsumeList(
     user: User,
     comparableType: ComparableType,
     comparableId: number,
-  ) {
+  ): Promise<ConsumptionStatus> {
     const comparableService = this.getComparableService(comparableType);
     const comparable = await this.getComparable(comparableType, comparableId);
 
-    await comparableService.removeToConsumeList(user, comparable);
+    return await comparableService.removeToConsumeList(user, comparable);
   }
 
   async getConsumptionStatuses(

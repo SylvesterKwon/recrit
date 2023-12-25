@@ -3,12 +3,12 @@ export enum ComparableType {
 }
 
 export type ConsumptionStatus = {
-  id: number;
+  comparableType: ComparableType;
+  comparableId: number;
   consumed: boolean;
   toConsumeListed: boolean;
 };
 
 export type ConsumptionStatusesDto = {
-  comparableType: ComparableType;
   consumptionStatuses: ConsumptionStatus[];
 };
