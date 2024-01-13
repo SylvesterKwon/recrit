@@ -17,6 +17,8 @@ import { ClsModule } from 'nestjs-cls';
 import { EventManagerModule } from './event-manager/event-manager.module';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import elasticsearchConfig from './config/elasticsearch.config';
+import { ElasticsearchWrapperModule } from './elaticsearch/elasticserach-wrapper.module';
+import fs from 'fs';
 
 @Module({
   imports: [
@@ -40,6 +42,17 @@ import elasticsearchConfig from './config/elasticsearch.config';
         inject: [ConfigService],
         useFactory: (configService: ConfigService) => ({
           node: configService.get<string>('elasticsearch.node') as string,
+          auth: {
+            username: configService.get<string>(
+              'elasticsearch.username',
+            ) as string,
+            password: configService.get<string>(
+              'elasticsearch.password',
+            ) as string,
+          },
+          tls: {
+            ca: fs.readFileSync('./http_ca.crt'),
+          },
         }),
       }),
       global: true,
@@ -65,11 +78,8 @@ import elasticsearchConfig from './config/elasticsearch.config';
     MovieModule,
     UserModule,
     GraphModule,
+    ElasticsearchWrapperModule,
   ],
   controllers: [AppController],
 })
-export class AppModule {
-  // constructor() {
-  //   console.log('AppModule constructor');
-  // }
-}
+export class AppModule {}
