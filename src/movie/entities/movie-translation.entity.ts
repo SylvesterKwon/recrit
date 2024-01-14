@@ -6,7 +6,7 @@ import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity
 
 @Entity({ repository: () => MovieTranslationRepository })
 export class MovieTranslation extends TimestampedEntity {
-  @ManyToOne()
+  @ManyToOne({ entity: () => Movie })
   movie: Ref<Movie>;
 
   @Property()

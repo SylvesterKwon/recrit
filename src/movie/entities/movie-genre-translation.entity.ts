@@ -6,7 +6,7 @@ import { MovieGenre } from './movie-genre.entity';
 
 @Entity({ repository: () => MovieGenreTranslationRepository })
 export class MovieGenreTranslation extends TimestampedEntity {
-  @ManyToOne()
+  @ManyToOne({ entity: () => MovieGenre })
   movieGenre: Ref<MovieGenre>;
 
   @Property()

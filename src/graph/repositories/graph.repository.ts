@@ -57,8 +57,8 @@ export class GraphRepository {
         comparison.verdict === ComparisonVerdict.EQUAL
           ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1), (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // equal
           : comparison.verdict === ComparisonVerdict.FIRST
-          ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
-          : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
+            ? `MERGE (c2)-[:BETTER_THAN {user_id: ${userId}}]->(c1)` // first
+            : `MERGE (c1)-[:BETTER_THAN {user_id: ${userId}}]->(c2)` // second
       }
     `);
   }
