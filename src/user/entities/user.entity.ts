@@ -12,7 +12,7 @@ import { Role } from './role.entity';
 import { UserRepository } from '../repositories/user.repository';
 import { Movie } from 'src/movie/entities/movie.entity';
 
-@Entity({ customRepository: () => UserRepository })
+@Entity({ repository: () => UserRepository })
 export class User extends TimestampedEntity {
   @Property()
   @Unique()

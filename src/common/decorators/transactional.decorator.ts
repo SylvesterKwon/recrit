@@ -1,7 +1,7 @@
 import {
   MikroORM,
   TransactionOptions,
-  UseRequestContext,
+  CreateRequestContext,
 } from '@mikro-orm/core';
 import { applyDecorators } from '@nestjs/common';
 
@@ -35,7 +35,7 @@ function MikroORMTransactional(options?: TransactionOptions) {
  * @param options See MikroORM [TransactionOptions](https://mikro-orm.io/api/next/core/interface/TransactionOptions).
  */
 export const Transactional = (options?: TransactionOptions) =>
-  applyDecorators(UseRequestContext(), MikroORMTransactional(options));
+  applyDecorators(CreateRequestContext(), MikroORMTransactional(options));
 
 type ApplicationWithMikroORM = {
   orm: MikroORM;

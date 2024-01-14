@@ -4,7 +4,7 @@ import { ComparisonRepository } from '../repositories/comparison.repository';
 import { User } from 'src/user/entities/user.entity';
 import { ComparableType } from 'src/comparable/types/comparable.types';
 
-@Entity({ customRepository: () => ComparisonRepository })
+@Entity({ repository: () => ComparisonRepository })
 export class Comparison extends TimestampedEntity {
   @Enum(() => ComparableType)
   comparableType: ComparableType;

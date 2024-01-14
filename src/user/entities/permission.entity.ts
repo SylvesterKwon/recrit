@@ -9,7 +9,7 @@ import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity
 import { PermissionRepository } from '../repositories/permission.repository';
 import { Role } from './role.entity';
 
-@Entity({ customRepository: () => PermissionRepository })
+@Entity({ repository: () => PermissionRepository })
 export class Permission extends TimestampedEntity {
   @Property()
   @Unique()
