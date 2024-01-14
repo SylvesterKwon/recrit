@@ -11,21 +11,46 @@ import neo4jConfig from './config/neo4j.config';
 import { GraphModule } from './graph/graph.module';
 import { ComparisonModule } from './comparison/comparison.module';
 import { ComparableModule } from './comparable/comparable.module';
+import kafkaConfig from './config/kafka.config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`/.env`],
-      load: [tmdbClientConfig, authConfig, neo4jConfig],
+      envFilePath: [`.env`],
+      load: [tmdbClientConfig, authConfig, neo4jConfig, kafkaConfig],
       isGlobal: true,
       // TODO: Add validation (e.g. joi)
+    }),
+    ClientsModule.registerAsync({
+      clients: [
+        {
+          name: 'RECRIT_SERVICE',
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+            transport: Transport.KAFKA,
+            options: {
+              client: {
+                clientId: 'recrit',
+                brokers: [configService.get<string>('kafka.url') as string], // TODO(deploy): make it list of urls
+              },
+              consumer: {
+                groupId: 'recrit-consumer',
+              },
+            },
+          }),
+        },
+      ],
+      isGlobal: true,
     }),
     MikroOrmModule.forRoot(),
     Neo4jModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService): Neo4jConnection => ({
-        scheme: configService.get<string>('neo4j.scheme') as Neo4jScheme,
+        scheme: configService.get<Neo4jScheme>('neo4j.scheme') as Neo4jScheme,
         host: configService.get<string>('neo4j.host') as string,
         port: configService.get<string>('neo4j.port') as string,
         username: configService.get<string>('neo4j.username') as string,
@@ -43,5 +68,6 @@ import { ComparableModule } from './comparable/comparable.module';
     UserModule,
     GraphModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
