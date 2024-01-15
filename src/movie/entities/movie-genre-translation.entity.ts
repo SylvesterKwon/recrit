@@ -4,9 +4,9 @@ import { MovieGenreTranslationRepository } from '../repositories/movie-genre-tra
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 import { MovieGenre } from './movie-genre.entity';
 
-@Entity({ customRepository: () => MovieGenreTranslationRepository })
+@Entity({ repository: () => MovieGenreTranslationRepository })
 export class MovieGenreTranslation extends TimestampedEntity {
-  @ManyToOne()
+  @ManyToOne({ entity: () => MovieGenre })
   movieGenre: Ref<MovieGenre>;
 
   @Property()

@@ -15,7 +15,7 @@ export class BaseExceptionFilter implements ExceptionFilter {
       res = exception;
     } else {
       res = new UnhandledException();
-      if (process.env.ENVIRONMENT === 'dev')
+      if (process.env.ENVIRONMENT === 'local')
         console.error('Unhandled error occured: ', exception);
     }
 

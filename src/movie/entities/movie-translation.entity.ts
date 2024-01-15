@@ -4,9 +4,9 @@ import { ISO31661, ISO6391 } from 'src/common/types/iso.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 import { TimestampedEntity } from 'src/common/entities/timestamped-entity.entity';
 
-@Entity({ customRepository: () => MovieTranslationRepository })
+@Entity({ repository: () => MovieTranslationRepository })
 export class MovieTranslation extends TimestampedEntity {
-  @ManyToOne()
+  @ManyToOne({ entity: () => Movie })
   movie: Ref<Movie>;
 
   @Property()

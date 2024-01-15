@@ -31,17 +31,20 @@ export class MovieGenreTranslationRepository extends EntityRepository<MovieGenre
             iso6391,
           },
         });
-        if (existingTranslations.length)
-          return this.assign(
-            existingTranslations[0],
-            movieGenreTranslationData,
-          );
-        else
+        if (existingTranslations.length) {
+          this.assign(existingTranslations[0], {
+            name: 'ASFD',
+          });
+          return this.assign(existingTranslations[0], {
+            name: movieGenreTranslationData.name,
+          });
+        } else {
           return this.create({
             movieGenre,
             iso6391,
             name: movieGenreTranslationData.name,
           });
+        }
       }),
     );
 

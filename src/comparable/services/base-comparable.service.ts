@@ -13,16 +13,17 @@ import {
   ComparableNotConsumedException,
   ComparableNotInToConsumeListException,
 } from '../../common/exceptions/comparable.exception';
-import { GraphRepository } from 'src/graph/repositories/graph.repository';
 import { ComparableType, ConsumptionStatus } from '../types/comparable.types';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { ComparableConsumedEvent } from '../events/comparable-consumed.event';
+import { ComparableUnconsumedEvent } from '../events/comparable-unconsumed.event';
 
 /**
  * Base comparable service. All comparable services must extend this class
  */
 export abstract class BaseComparableService<T extends Comparable> {
   protected abstract orm: MikroORM;
-
-  protected abstract graphRepository: GraphRepository;
+  protected abstract eventManagerService: EventManagerService;
 
   /**
    * Comparable entity
@@ -76,10 +77,8 @@ export abstract class BaseComparableService<T extends Comparable> {
       }
     }
 
-    await this.graphRepository.upsertConsume(
-      user,
-      comparable.type,
-      comparable.id,
+    this.eventManagerService.enqueueEvent(
+      new ComparableConsumedEvent(user, comparable),
     );
 
     await this.orm.em.flush();
@@ -98,10 +97,8 @@ export abstract class BaseComparableService<T extends Comparable> {
 
     userConsumedComparables.remove(comparable);
 
-    await this.graphRepository.deleteConsume(
-      user,
-      comparable.type,
-      comparable.id,
+    this.eventManagerService.enqueueEvent(
+      new ComparableUnconsumedEvent(user, comparable),
     );
 
     await this.orm.em.flush();

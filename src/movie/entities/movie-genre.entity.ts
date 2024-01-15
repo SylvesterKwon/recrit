@@ -11,7 +11,7 @@ import { MovieGenreRepository } from '../repositories/movie-genre.repository';
 import { Movie } from './movie.entity';
 import { MovieGenreTranslation } from './movie-genre-translation.entity';
 
-@Entity({ customRepository: () => MovieGenreRepository })
+@Entity({ repository: () => MovieGenreRepository })
 export class MovieGenre extends TimestampedEntity {
   @Property()
   @Unique()

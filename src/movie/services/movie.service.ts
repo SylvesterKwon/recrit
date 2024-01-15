@@ -9,14 +9,14 @@ import { MovieTranslationRepository } from '../repositories/movie-translation.re
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
-import { GraphRepository } from 'src/graph/repositories/graph.repository';
 import { MikroORM } from '@mikro-orm/core';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
 
 @Injectable()
 export class MovieService extends BaseComparableService<Movie> {
   constructor(
     protected orm: MikroORM,
-    protected graphRepository: GraphRepository,
+    protected eventManagerService: EventManagerService,
     private movieRepository: MovieRepository,
     private movieTranslationRepository: MovieTranslationRepository,
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,

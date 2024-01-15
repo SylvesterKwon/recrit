@@ -7,6 +7,7 @@ import { ComparableApplication } from './comparable.application';
 import { MovieModule } from 'src/movie/movie.module';
 import { User } from 'src/user/entities/user.entity';
 import { GraphModule } from 'src/graph/graph.module';
+import { ComparableTask } from './comparable.task';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { GraphModule } from 'src/graph/graph.module';
     MovieModule,
     GraphModule,
   ],
-  providers: [ComparableProxyService, ComparableApplication],
+  providers: [ComparableProxyService, ComparableApplication, ComparableTask],
   controllers: [ComparableController],
   exports: [ComparableProxyService],
 })

@@ -6,15 +6,20 @@ import { AuthService } from './services/auth.service';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
 import { UserRepository } from './repositories/user.repository';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
+import { BaseApplication } from 'src/common/applications/base.applicaiton';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
 
 @Injectable()
-export class UserApplication {
+export class UserApplication extends BaseApplication {
   constructor(
-    private orm: MikroORM,
+    protected orm: MikroORM,
+    protected eventManagerService: EventManagerService,
     private userService: UserService,
     private authService: AuthService,
     private userRepository: UserRepository,
-  ) {}
+  ) {
+    super();
+  }
 
   @Transactional()
   async signIn(userId: number) {

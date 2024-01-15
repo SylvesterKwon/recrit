@@ -11,7 +11,7 @@ import { Permission } from './permission.entity';
 import { User } from './user.entity';
 import { RoleRepository } from '../repositories/role.repository';
 
-@Entity({ customRepository: () => RoleRepository })
+@Entity({ repository: () => RoleRepository })
 export class Role extends TimestampedEntity {
   @Property()
   @Unique()

@@ -8,15 +8,20 @@ import { ComparableProxyService } from 'src/comparable/services/comparable-proxy
 import { ComparableType } from 'src/comparable/types/comparable.types';
 import { UserNotFoundException } from 'src/common/exceptions/user.exception';
 import { ComparableNotFoundException } from 'src/common/exceptions/comparable.exception';
+import { BaseApplication } from 'src/common/applications/base.applicaiton';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
 
 @Injectable()
-export class ComparisonApplication {
+export class ComparisonApplication extends BaseApplication {
   constructor(
-    private orm: MikroORM,
+    protected orm: MikroORM,
+    protected eventManagerService: EventManagerService,
     private comparisonService: ComparisonService,
     private comparableProxyService: ComparableProxyService,
     private userRepository: UserRepository,
-  ) {}
+  ) {
+    super();
+  }
 
   @Transactional()
   async createComparison(

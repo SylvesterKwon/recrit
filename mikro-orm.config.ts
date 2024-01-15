@@ -1,4 +1,5 @@
 import { LoadStrategy, Options } from '@mikro-orm/core';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 
 // https://mikro-orm.io/docs/next/configuration#using-environment-variables
@@ -12,7 +13,7 @@ const config: Options = {
   password: process.env.MIKRO_ORM_PASSWORD,
   dbName: process.env.MIKRO_ORM_DB_NAME,
   debug: process.env.MIKRO_ORM_DEBUG === 'true',
-  type: 'postgresql',
+  driver: PostgreSqlDriver,
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
   loadStrategy: LoadStrategy.JOINED,

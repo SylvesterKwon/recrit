@@ -19,7 +19,7 @@ import { User } from 'src/user/entities/user.entity';
 
 // not using popularity, voteAverage, voteCount from original TMDB data
 
-@Entity({ customRepository: () => MovieRepository })
+@Entity({ repository: () => MovieRepository })
 export class Movie extends Comparable {
   get type() {
     return ComparableType.MOVIE;
