@@ -9,10 +9,17 @@ import {
   ComparableIdListDto,
   ComparableTypeDto,
 } from './comparable.dto';
+import { EventPattern, Payload } from '@nestjs/microservices';
+import { ComparableConsumedEvent } from './events/comparable-consumed.event';
+import { ComparableUnconsumedEvent } from './events/comparable-unconsumed.event';
+import { ComparableTask } from './comparable.task';
 
 @Controller('comparable')
 export class ComparableController {
-  constructor(private comparableApplication: ComparableApplication) {}
+  constructor(
+    private comparableApplication: ComparableApplication,
+    private comparableTask: ComparableTask,
+  ) {}
 
   @Get(':comparableType/:comparableId')
   async getComparableInforamtion(
@@ -89,6 +96,28 @@ export class ComparableController {
       userId,
       comparableTypeDto.comparableType,
       comparableIdListDto.comparableIds,
+    );
+  }
+
+  @EventPattern('comparable.consumed')
+  async handleComparableConsumedEvent(
+    @Payload() event: ComparableConsumedEvent,
+  ) {
+    return await this.comparableTask.addConsumeInGraph(
+      event.userId,
+      event.comparableType,
+      event.comparableId,
+    );
+  }
+
+  @EventPattern('comparable.unconsumed')
+  async handleComparableUnconsumedEvent(
+    @Payload() event: ComparableUnconsumedEvent,
+  ) {
+    return await this.comparableTask.removeConsumeInGraph(
+      event.userId,
+      event.comparableType,
+      event.comparableId,
     );
   }
 }

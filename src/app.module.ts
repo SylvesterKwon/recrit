@@ -12,8 +12,9 @@ import { GraphModule } from './graph/graph.module';
 import { ComparisonModule } from './comparison/comparison.module';
 import { ComparableModule } from './comparable/comparable.module';
 import kafkaConfig from './config/kafka.config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
+import { ClsModule } from 'nestjs-cls';
+import { EventManagerModule } from './event-manager/event-manager.module';
 
 @Module({
   imports: [
@@ -23,28 +24,13 @@ import { AppController } from './app.controller';
       isGlobal: true,
       // TODO: Add validation (e.g. joi)
     }),
-    ClientsModule.registerAsync({
-      clients: [
-        {
-          name: 'RECRIT_SERVICE',
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: (configService: ConfigService) => ({
-            transport: Transport.KAFKA,
-            options: {
-              client: {
-                clientId: 'recrit',
-                brokers: [configService.get<string>('kafka.url') as string], // TODO(deploy): make it list of urls
-              },
-              consumer: {
-                groupId: 'recrit-consumer',
-              },
-            },
-          }),
-        },
-      ],
-      isGlobal: true,
+    ClsModule.forRoot({
+      middleware: {
+        mount: true,
+      },
+      global: true,
     }),
+    EventManagerModule,
     MikroOrmModule.forRoot(),
     Neo4jModule.forRootAsync({
       imports: [ConfigModule],

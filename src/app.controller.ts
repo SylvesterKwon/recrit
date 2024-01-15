@@ -1,22 +1,11 @@
-import { Controller, Get, Inject } from '@nestjs/common';
-import { ClientKafka, EventPattern, Payload } from '@nestjs/microservices';
+import { Controller, Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(@Inject('RECRIT_SERVICE') private kafkaClient: ClientKafka) {}
+  constructor() {}
+
   @Get('health-check')
   healthCheck() {
     return 'healthy!';
-  }
-
-  // Kafka event POC
-  @Get('emit-test')
-  emitTest() {
-    this.kafkaClient.emit('test', { test: 'test' });
-  }
-
-  @EventPattern('test')
-  mesageTest(@Payload() message: any) {
-    console.log(message);
   }
 }

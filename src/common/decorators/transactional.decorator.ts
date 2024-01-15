@@ -1,9 +1,6 @@
-import {
-  MikroORM,
-  TransactionOptions,
-  CreateRequestContext,
-} from '@mikro-orm/core';
+import { TransactionOptions, CreateRequestContext } from '@mikro-orm/core';
 import { applyDecorators } from '@nestjs/common';
+import { BaseApplication } from '../applications/base.applicaiton';
 
 /**
  * Decorator that applys DB transaction functionality to the following method.
@@ -11,20 +8,21 @@ import { applyDecorators } from '@nestjs/common';
  */
 function MikroORMTransactional(options?: TransactionOptions) {
   return function (
-    target: ApplicationWithMikroORM,
+    target: BaseApplication,
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (
-      this: ApplicationWithMikroORM,
-      ...args: any[]
-    ) {
-      const orm = this.orm;
-      return await orm.em.transactional(async () => {
+    descriptor.value = async function (this: BaseApplication, ...args: any[]) {
+      // MikroORM transaction
+      const result = await this.orm.em.transactional(async () => {
         return await originalMethod.apply(this, args);
       }, options);
+
+      // After transaction, emit all queued events
+      this.eventManagerService.emitAllEvents();
+      return result;
     };
   };
 }
@@ -36,7 +34,3 @@ function MikroORMTransactional(options?: TransactionOptions) {
  */
 export const Transactional = (options?: TransactionOptions) =>
   applyDecorators(CreateRequestContext(), MikroORMTransactional(options));
-
-type ApplicationWithMikroORM = {
-  orm: MikroORM;
-};

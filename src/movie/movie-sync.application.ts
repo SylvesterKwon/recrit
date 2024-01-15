@@ -3,14 +3,18 @@ import { MovieSyncService } from './services/movie-sync.service';
 import { MikroORM } from '@mikro-orm/core';
 import { ISO6391 } from 'src/common/types/iso.types';
 import { Transactional } from 'src/common/decorators/transactional.decorator';
+import { BaseApplication } from 'src/common/applications/base.applicaiton';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
 // import { delay } from 'src/common/utils/delay';
 
 @Injectable()
-export class MovieSyncApplication {
+export class MovieSyncApplication extends BaseApplication {
   constructor(
-    private orm: MikroORM,
+    protected orm: MikroORM,
+    protected eventManagerService: EventManagerService,
     private movieSyncService: MovieSyncService,
   ) {
+    super();
     // TODO: 테스트용 임시 코드, 삭제 필요
     // this.syncMovieGenres();
     // delay(1000);

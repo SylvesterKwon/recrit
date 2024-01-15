@@ -9,14 +9,19 @@ import {
   ConsumptionStatusesDto,
   ComparableType,
 } from './types/comparable.types';
+import { BaseApplication } from 'src/common/applications/base.applicaiton';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
 
 @Injectable()
-export class ComparableApplication {
+export class ComparableApplication extends BaseApplication {
   constructor(
-    private orm: MikroORM,
+    protected orm: MikroORM,
+    protected eventManagerService: EventManagerService,
     private userRepository: UserRepository,
     private comparableProxyService: ComparableProxyService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Transactional()
   async getComparableInforamtion(
