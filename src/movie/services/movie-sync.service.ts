@@ -6,11 +6,12 @@ import { MovieRepository } from '../repositories/movie.repository';
 import { ISO6391 } from 'src/common/types/iso.types';
 import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
-import { ComparableType } from 'src/comparable/types/comparable.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ElasticsearchIndex } from 'src/elaticsearch/services/elasticsearch-initialization.service';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { ComparableUpdatedEvent } from 'src/comparable/events/comparable-updated.event';
 
 @Injectable()
 export class MovieSyncService {
@@ -22,6 +23,7 @@ export class MovieSyncService {
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private graphRepository: GraphRepository,
     private elasticsearchService: ElasticsearchService,
+    private eventManagerService: EventManagerService,
   ) {}
 
   async syncAllMovies() {
@@ -117,11 +119,7 @@ export class MovieSyncService {
       });
 
       // sync graph
-      await this.graphRepository.upsertComparable(
-        ComparableType.MOVIE,
-        movie.id,
-        movie.title,
-      );
+      this.eventManagerService.enqueueEvent(new ComparableUpdatedEvent(movie));
 
       return movie;
     } catch (error) {

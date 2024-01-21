@@ -13,6 +13,7 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 import { ComparableConsumedEvent } from './events/comparable-consumed.event';
 import { ComparableUnconsumedEvent } from './events/comparable-unconsumed.event';
 import { ComparableTask } from './comparable.task';
+import { ComparableUpdatedEvent } from './events/comparable-updated.event';
 
 @Controller('comparable')
 export class ComparableController {
@@ -99,11 +100,18 @@ export class ComparableController {
     );
   }
 
+  @EventPattern('comparable.updated')
+  async comparableUpdated(@Payload() event: ComparableUpdatedEvent) {
+    return await this.comparableTask.handleComparableUpdated(
+      event.comparableType,
+      event.comparableId,
+      event.title,
+    );
+  }
+
   @EventPattern('comparable.consumed')
-  async handleComparableConsumedEvent(
-    @Payload() event: ComparableConsumedEvent,
-  ) {
-    return await this.comparableTask.addConsumeInGraph(
+  async comparableConsumed(@Payload() event: ComparableConsumedEvent) {
+    return await this.comparableTask.handleComparableConsumed(
       event.userId,
       event.comparableType,
       event.comparableId,
@@ -111,10 +119,8 @@ export class ComparableController {
   }
 
   @EventPattern('comparable.unconsumed')
-  async handleComparableUnconsumedEvent(
-    @Payload() event: ComparableUnconsumedEvent,
-  ) {
-    return await this.comparableTask.removeConsumeInGraph(
+  async comparableUnconsumed(@Payload() event: ComparableUnconsumedEvent) {
+    return await this.comparableTask.handleComparableUnconsumed(
       event.userId,
       event.comparableType,
       event.comparableId,

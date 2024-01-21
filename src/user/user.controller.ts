@@ -7,10 +7,16 @@ import {
   PermissionRequired,
 } from 'src/common/decorators/auth.decorator';
 import { UserId } from 'src/common/decorators/user.decorator';
+import { UserCreatedEvent } from './events/user-created.event';
+import { UserTask } from './user.task';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 @Controller('user')
 export class UserController {
-  constructor(private userApplication: UserApplication) {}
+  constructor(
+    private userApplication: UserApplication,
+    private userTask: UserTask,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
@@ -42,5 +48,10 @@ export class UserController {
   @Get('admin')
   getAdminPage(@UserId() userId: number) {
     return userId;
+  }
+
+  @EventPattern('user.created')
+  async userCreated(@Payload() event: UserCreatedEvent) {
+    return await this.userTask.handleUserCreated(event.userId);
   }
 }

@@ -7,6 +7,7 @@ import { Comparison } from './entities/comparison.entity';
 import { ComparableModule } from 'src/comparable/comparable.module';
 import { User } from 'src/user/entities/user.entity';
 import { ComparisonController } from './comparison.controller';
+import { ComparisonTask } from './comparison.task';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { ComparisonController } from './comparison.controller';
     ComparableModule,
   ],
   controllers: [ComparisonController],
-  providers: [ComparisonApplication, ComparisonService],
+  providers: [ComparisonApplication, ComparisonTask, ComparisonService],
 })
 export class ComparisonModule {}
