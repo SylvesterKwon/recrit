@@ -5,12 +5,15 @@ import { ComparisonVerdict } from '../entities/comparison.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Comparable } from 'src/common/entities/comparable.entity';
 import { SameComparisonExistsException } from 'src/common/exceptions/comparison.exception';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { ComparisonCreatedEvent } from '../events/comparison-created.event';
 
 @Injectable()
 export class ComparisonService {
   constructor(
     private comparisonRepository: ComparisonRepository,
     private graphRepository: GraphRepository,
+    private eventManagerService: EventManagerService,
   ) {}
 
   async createComparison(
@@ -51,7 +54,9 @@ export class ComparisonService {
       verdict: reorderedComparison.verdict,
     });
 
-    await this.graphRepository.upsertComparison(comparison);
+    this.eventManagerService.enqueueEvent(
+      new ComparisonCreatedEvent(comparison),
+    );
     return comparison;
   }
 

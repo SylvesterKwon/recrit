@@ -6,9 +6,12 @@ import { MovieRepository } from '../repositories/movie.repository';
 import { ISO6391 } from 'src/common/types/iso.types';
 import { delay } from 'src/common/utils/delay';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
-import { ComparableType } from 'src/comparable/types/comparable.types';
 import { MovieTranslationRepository } from '../repositories/movie-translation.repository';
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { ElasticsearchIndex } from 'src/elaticsearch/services/elasticsearch-initialization.service';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { ComparableUpdatedEvent } from 'src/comparable/events/comparable-updated.event';
 
 @Injectable()
 export class MovieSyncService {
@@ -19,6 +22,8 @@ export class MovieSyncService {
     private movieTranslationRepository: MovieTranslationRepository,
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private graphRepository: GraphRepository,
+    private elasticsearchService: ElasticsearchService,
+    private eventManagerService: EventManagerService,
   ) {}
 
   async syncAllMovies() {
@@ -77,10 +82,11 @@ export class MovieSyncService {
       const movie = await this.movieRepository.upsert(tmdbMovieData.movieProps);
 
       // sync movie translations
-      await this.movieTranslationRepository.upsertManyByMovieAndIsoCodes(
-        movie,
-        movieTranslationDataList,
-      );
+      const movieTranslations =
+        await this.movieTranslationRepository.upsertManyByMovieAndIsoCodes(
+          movie,
+          movieTranslationDataList,
+        );
 
       // sync movie genres
       const genres = await this.movieGenreRepository.findByTmdbIds(
@@ -91,11 +97,29 @@ export class MovieSyncService {
       const em = this.movieRepository.getEntityManager();
       await em.flush();
 
-      await this.graphRepository.upsertComparable(
-        ComparableType.MOVIE,
-        movie.id,
-        movie.title,
-      );
+      // sync elasticsearch document
+      // TODO: move elasticsearch indexing logic to MovieService
+      await this.elasticsearchService.index({
+        index: ElasticsearchIndex.Movie,
+        id: String(movie.id),
+        document: {
+          // Add all translated movie titles
+          title: movie.title,
+          originalTitle: movie.originalTitle,
+          translation: movieTranslations.reduce(
+            (acc: Record<string, string | undefined>, movieTranslation) => {
+              const key =
+                `${movieTranslation.iso6391}-${movieTranslation.iso31661}` as string;
+              acc[key] = movieTranslation.title;
+              return acc;
+            },
+            {},
+          ),
+        },
+      });
+
+      // sync graph
+      this.eventManagerService.enqueueEvent(new ComparableUpdatedEvent(movie));
 
       return movie;
     } catch (error) {

@@ -22,7 +22,20 @@ export class ComparableTask extends BaseTask {
   // TODO: @Task 데코레이터 생성후 task 재시도 등 여러 정책 설정할 수 있도록 하기
 
   @Transactional()
-  async addConsumeInGraph(
+  async handleComparableUpdated(
+    comparableType: ComparableType,
+    comparableId: number,
+    title?: string,
+  ) {
+    await this.graphRepository.upsertComparable(
+      comparableType,
+      comparableId,
+      title,
+    );
+  }
+
+  @Transactional()
+  async handleComparableConsumed(
     userId: number,
     comparableType: ComparableType,
     comparableId: number,
@@ -38,7 +51,7 @@ export class ComparableTask extends BaseTask {
   }
 
   @Transactional()
-  async removeConsumeInGraph(
+  async handleComparableUnconsumed(
     userId: number,
     comparableType: ComparableType,
     comparableId: number,

@@ -15,14 +15,23 @@ import kafkaConfig from './config/kafka.config';
 import { AppController } from './app.controller';
 import { ClsModule } from 'nestjs-cls';
 import { EventManagerModule } from './event-manager/event-manager.module';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import elasticsearchConfig from './config/elasticsearch.config';
+import { ElasticsearchWrapperModule } from './elaticsearch/elasticserach-wrapper.module';
+import fs from 'fs';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: [`.env`],
-      load: [tmdbClientConfig, authConfig, neo4jConfig, kafkaConfig],
+      load: [
+        tmdbClientConfig,
+        authConfig,
+        neo4jConfig,
+        kafkaConfig,
+        elasticsearchConfig,
+      ],
       isGlobal: true,
-      // TODO: Add validation (e.g. joi)
     }),
     ClsModule.forRoot({
       middleware: {
@@ -32,6 +41,28 @@ import { EventManagerModule } from './event-manager/event-manager.module';
     }),
     EventManagerModule,
     MikroOrmModule.forRoot(),
+    {
+      // ElastchsearchModule dose not support forRoot/forRootAsync
+      ...ElasticsearchModule.registerAsync({
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          node: configService.get<string>('elasticsearch.node') as string,
+          auth: {
+            username: configService.get<string>(
+              'elasticsearch.username',
+            ) as string,
+            password: configService.get<string>(
+              'elasticsearch.password',
+            ) as string,
+          },
+          tls: {
+            ca: fs.readFileSync('./http_ca.crt'),
+          },
+        }),
+      }),
+      global: true,
+    },
     Neo4jModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -53,6 +84,7 @@ import { EventManagerModule } from './event-manager/event-manager.module';
     MovieModule,
     UserModule,
     GraphModule,
+    ElasticsearchWrapperModule,
   ],
   controllers: [AppController],
 })

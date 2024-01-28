@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ComparableApplication } from './comparable.application';
 import { Language } from 'src/common/decorators/language.decorator';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
@@ -13,6 +13,7 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 import { ComparableConsumedEvent } from './events/comparable-consumed.event';
 import { ComparableUnconsumedEvent } from './events/comparable-unconsumed.event';
 import { ComparableTask } from './comparable.task';
+import { ComparableUpdatedEvent } from './events/comparable-updated.event';
 
 @Controller('comparable')
 export class ComparableController {
@@ -20,6 +21,19 @@ export class ComparableController {
     private comparableApplication: ComparableApplication,
     private comparableTask: ComparableTask,
   ) {}
+
+  @Get(':comparableType/keyword-search')
+  async keywordSearch(
+    @Param() comparableTypeDto: ComparableTypeDto,
+    @Query('keyword') keyword: string,
+    @Language() language?: LanguageISOCodes,
+  ) {
+    return await this.comparableApplication.keywordSearch(
+      comparableTypeDto.comparableType,
+      keyword,
+      language,
+    );
+  }
 
   @Get(':comparableType/:comparableId')
   async getComparableInforamtion(
@@ -99,11 +113,18 @@ export class ComparableController {
     );
   }
 
+  @EventPattern('comparable.updated')
+  async comparableUpdated(@Payload() event: ComparableUpdatedEvent) {
+    return await this.comparableTask.handleComparableUpdated(
+      event.comparableType,
+      event.comparableId,
+      event.title,
+    );
+  }
+
   @EventPattern('comparable.consumed')
-  async handleComparableConsumedEvent(
-    @Payload() event: ComparableConsumedEvent,
-  ) {
-    return await this.comparableTask.addConsumeInGraph(
+  async comparableConsumed(@Payload() event: ComparableConsumedEvent) {
+    return await this.comparableTask.handleComparableConsumed(
       event.userId,
       event.comparableType,
       event.comparableId,
@@ -111,10 +132,8 @@ export class ComparableController {
   }
 
   @EventPattern('comparable.unconsumed')
-  async handleComparableUnconsumedEvent(
-    @Payload() event: ComparableUnconsumedEvent,
-  ) {
-    return await this.comparableTask.removeConsumeInGraph(
+  async comparableUnconsumed(@Payload() event: ComparableUnconsumedEvent) {
+    return await this.comparableTask.handleComparableUnconsumed(
       event.userId,
       event.comparableType,
       event.comparableId,

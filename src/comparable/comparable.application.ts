@@ -39,6 +39,23 @@ export class ComparableApplication extends BaseApplication {
   }
 
   @Transactional()
+  async keywordSearch(
+    comparableType: ComparableType,
+    keyword: string,
+    languageIsoCodes?: LanguageISOCodes,
+  ) {
+    const searchResults = await this.comparableProxyService.keywordSearch(
+      comparableType,
+      keyword,
+      languageIsoCodes,
+    );
+
+    return {
+      results: searchResults,
+    };
+  }
+
+  @Transactional()
   async consumeComparable(
     userId: number,
     comparableType: ComparableType,

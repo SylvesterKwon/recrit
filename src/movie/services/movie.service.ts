@@ -11,6 +11,9 @@ import { MovieGenreTranslation } from '../entities/movie-genre-translation.entit
 import { User } from 'src/user/entities/user.entity';
 import { MikroORM } from '@mikro-orm/core';
 import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { ElasticsearchIndex } from 'src/elaticsearch/services/elasticsearch-initialization.service';
+import { ElasticsearchMovieDocument } from 'src/elaticsearch/elasticsearch.types';
 
 @Injectable()
 export class MovieService extends BaseComparableService<Movie> {
@@ -21,6 +24,7 @@ export class MovieService extends BaseComparableService<Movie> {
     private movieTranslationRepository: MovieTranslationRepository,
     private movieGenreTranslationRepository: MovieGenreTranslationRepository,
     private tmdbUtilService: TmdbUtilService,
+    private elasticSearchService: ElasticsearchService,
   ) {
     super();
   }
@@ -111,5 +115,57 @@ export class MovieService extends BaseComparableService<Movie> {
       productionCountryCodes: movie.productionCountryCodes,
       spokenLanguageCodes: movie.spokenLanguageCodes,
     };
+  }
+
+  async keywordSearch(keyword: string, languageIsoCodes?: LanguageISOCodes) {
+    const res =
+      await this.elasticSearchService.search<ElasticsearchMovieDocument>({
+        index: ElasticsearchIndex.Movie,
+        query: {
+          multi_match: {
+            type: 'phrase', // reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#multi-match-types
+            query: keyword,
+            fields: ['title', 'originalTitle', 'translation.*'],
+          },
+        },
+        // highlight: {
+        //   fields: {
+        //     title: {},
+        //     originalTitle: {},
+        //     'translation.*': {},
+        //   },
+        // },
+      });
+
+    console.log(JSON.stringify(res, null, 2));
+
+    const searchResults = res.hits.hits.map((hit) => {
+      let translatedTitle = null;
+      const translation = hit._source?.translation;
+
+      if (languageIsoCodes && translation) {
+        if (languageIsoCodes.iso31661) {
+          // Both ISO-639-1 (Language code) and ISO-3166-1 (Coutnry code) is given
+          translatedTitle =
+            translation[
+              `${languageIsoCodes.iso6391}-${languageIsoCodes.iso31661}`
+            ];
+        } else {
+          // Only ISO-639-1 (Language code) is given
+          const translationKey = Object.keys(translation).find((key) =>
+            key.startsWith(languageIsoCodes.iso6391),
+          );
+          if (translationKey) translatedTitle = translation[translationKey];
+        }
+      }
+
+      return {
+        id: Number(hit._id),
+        title: hit._source?.title,
+        originalTitle: hit._source?.originalTitle,
+        translatedTitle: translatedTitle,
+      };
+    });
+    return searchResults;
   }
 }

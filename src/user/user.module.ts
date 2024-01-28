@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { GraphModule } from 'src/graph/graph.module';
+import { UserTask } from './user.task';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { GraphModule } from 'src/graph/graph.module';
   controllers: [UserController],
   providers: [
     UserApplication,
+    UserTask,
     UserService,
     AuthService,
     LocalStrategy,

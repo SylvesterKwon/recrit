@@ -9,10 +9,13 @@ import {
   UsernameAlreadyExistsException,
 } from 'src/common/exceptions/user.exception';
 import { GraphRepository } from 'src/graph/repositories/graph.repository';
+import { EventManagerService } from 'src/event-manager/event-manager.service';
+import { UserCreatedEvent } from '../events/user-created.event';
 
 @Injectable()
 export class UserService {
   constructor(
+    private eventManagerService: EventManagerService,
     private userRepository: UserRepository,
     private permissionRepository: PermissionRepository,
     private graphRepository: GraphRepository,
@@ -40,10 +43,11 @@ export class UserService {
     const em = this.userRepository.getEntityManager();
     await em.flush(); // flush to generate id
 
-    await this.graphRepository.createUserNode(user);
+    this.eventManagerService.enqueueEvent(new UserCreatedEvent(user));
   }
 
   remove(userId: number) {
+    // TODO: refactor this
     const em = this.userRepository.getEntityManager();
     em.remove(em.getReference(User, userId));
   }
@@ -66,9 +70,8 @@ export class UserService {
     const rolePermissions = await role.permissions?.init();
     console.log(user.role);
     if (!rolePermissions) return false;
-    const permission = await this.permissionRepository.findByName(
-      permissionName,
-    );
+    const permission =
+      await this.permissionRepository.findByName(permissionName);
     if (!permission)
       throw new NotFoundException(`Permission '${permissionName}'not found.`);
     return rolePermissions.contains(permission);

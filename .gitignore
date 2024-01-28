@@ -39,3 +39,6 @@ lerna-debug.log*
 
 # NestJS / MikroORM
 temp/
+
+# Elasticsearch
+http_ca.crt
