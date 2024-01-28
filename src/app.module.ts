@@ -24,7 +24,13 @@ import fs from 'fs';
   imports: [
     ConfigModule.forRoot({
       envFilePath: [`.env`],
-      load: [tmdbClientConfig, authConfig, neo4jConfig, kafkaConfig, elasticsearchConfig],
+      load: [
+        tmdbClientConfig,
+        authConfig,
+        neo4jConfig,
+        kafkaConfig,
+        elasticsearchConfig,
+      ],
       isGlobal: true,
     }),
     ClsModule.forRoot({

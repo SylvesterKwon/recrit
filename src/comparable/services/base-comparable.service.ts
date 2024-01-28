@@ -209,4 +209,9 @@ export abstract class BaseComparableService<T extends Comparable> {
     comparable: Comparable,
     languageIsoCodes?: LanguageISOCodes,
   ): Promise<any>;
+
+  /**
+   * Search comparable by keyword using ElasticSearch
+   */
+  abstract keywordSearch(keyword: string): Promise<any[]>;
 }

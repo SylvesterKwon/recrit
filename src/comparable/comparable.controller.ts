@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ComparableApplication } from './comparable.application';
 import { Language } from 'src/common/decorators/language.decorator';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
@@ -21,6 +21,19 @@ export class ComparableController {
     private comparableApplication: ComparableApplication,
     private comparableTask: ComparableTask,
   ) {}
+
+  @Get(':comparableType/keyword-search')
+  async keywordSearch(
+    @Param() comparableTypeDto: ComparableTypeDto,
+    @Query('keyword') keyword: string,
+    @Language() language?: LanguageISOCodes,
+  ) {
+    return await this.comparableApplication.keywordSearch(
+      comparableTypeDto.comparableType,
+      keyword,
+      language,
+    );
+  }
 
   @Get(':comparableType/:comparableId')
   async getComparableInforamtion(

@@ -11,7 +11,10 @@ import { User } from 'src/user/entities/user.entity';
  */
 @Injectable()
 export class ComparableProxyService {
-  constructor(private em: EntityManager, private movieService: MovieService) {}
+  constructor(
+    private em: EntityManager,
+    private movieService: MovieService,
+  ) {}
 
   private getComparableService(type: ComparableType) {
     if (type === ComparableType.MOVIE) return this.movieService;
@@ -39,6 +42,15 @@ export class ComparableProxyService {
     const comparable = await this.getComparable(comparableType, comparableId);
 
     return await comparableService.getInformation(comparable, languageIsoCodes);
+  }
+
+  async keywordSearch(
+    comparableType: ComparableType,
+    keyword: string,
+    languageIsoCodes?: LanguageISOCodes,
+  ) {
+    const comparableService = this.getComparableService(comparableType);
+    return await comparableService.keywordSearch(keyword, languageIsoCodes);
   }
 
   async consumeComparable(
