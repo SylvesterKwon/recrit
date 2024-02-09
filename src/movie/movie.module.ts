@@ -9,6 +9,7 @@ import { GraphModule } from 'src/graph/graph.module';
 import { MovieService } from './services/movie.service';
 import { MovieTranslation } from './entities/movie-translation.entity';
 import { MovieGenreTranslation } from './entities/movie-genre-translation.entity';
+import { MovieApplication } from './movie.application';
 
 @Module({
   imports: [
@@ -19,7 +20,12 @@ import { MovieGenreTranslation } from './entities/movie-genre-translation.entity
     GraphModule,
   ],
   controllers: [],
-  providers: [MovieService, MovieSyncApplication, MovieSyncService],
-  exports: [MovieService],
+  providers: [
+    MovieApplication,
+    MovieSyncApplication,
+    MovieSyncService,
+    MovieService,
+  ],
+  exports: [MovieApplication, MovieService],
 })
 export class MovieModule {}

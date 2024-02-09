@@ -1,5 +1,5 @@
 import { IsEnum, IsNumber, IsNumberString } from 'class-validator';
-import { ComparableType } from './types/comparable.types';
+import { ComparableType } from '../types/comparable.types';
 
 export class ComparableTypeDto {
   @IsEnum(ComparableType)
