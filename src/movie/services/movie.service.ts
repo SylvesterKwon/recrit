@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseComparableService } from 'src/comparable/services/base-comparable.service';
 import { Movie } from '../entities/movie.entity';
-import { MovieInformation } from '../types/movie.types';
+import { MovieFilter, MovieInformation } from '../types/movie.types';
 import { MovieRepository } from '../repositories/movie.repository';
 import { TmdbUtilService } from 'src/tmdb/services/tmdb-util.service';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
@@ -9,7 +9,7 @@ import { MovieTranslationRepository } from '../repositories/movie-translation.re
 import { MovieGenreTranslationRepository } from '../repositories/movie-genre-translation.repository';
 import { MovieGenreTranslation } from '../entities/movie-genre-translation.entity';
 import { User } from 'src/user/entities/user.entity';
-import { MikroORM } from '@mikro-orm/core';
+import { FilterQuery, MikroORM } from '@mikro-orm/core';
 import { EventManagerService } from 'src/event-manager/event-manager.service';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ElasticsearchIndex } from 'src/elaticsearch/services/elasticsearch-initialization.service';
@@ -38,6 +38,32 @@ export class MovieService extends BaseComparableService<Movie> {
 
   getUserToConsumeComparableList(user: User) {
     return user.toConsumeMovieList;
+  }
+
+  async getList(movieFilter: MovieFilter, languageIsoCodes?: LanguageISOCodes) {
+    const filterQuery: FilterQuery<Movie> = {};
+    if (movieFilter.genreIds) {
+      filterQuery.genres = { $in: movieFilter.genreIds };
+    }
+    // TODO(TSK-80): Add more intersting filters...
+
+    const page = movieFilter.page || 1;
+    const pageSize = movieFilter.pageSize || 20;
+
+    const [movies, totalCount] = await this.movieRepository.findAndCount(
+      filterQuery,
+      {
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      },
+    );
+
+    // TODO(TSK-78): Movie entity 그대로 내려주지 말고, 필요한 정보만 내려주도록 수정하기
+    // TODO(TSK-79): languageIsoCodes 가 주어진 경우, 번역된 정보를 내려주도록 수정하기
+    return {
+      totalCount: totalCount,
+      results: movies,
+    };
   }
 
   async getInformation(

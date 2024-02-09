@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ComparableApplication } from './comparable.application';
 import { Language } from 'src/common/decorators/language.decorator';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
@@ -8,20 +17,46 @@ import {
   ComparableDto,
   ComparableIdListDto,
   ComparableTypeDto,
-} from './comparable.dto';
+} from './dtos/comparable.dto';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { ComparableConsumedEvent } from './events/comparable-consumed.event';
 import { ComparableUnconsumedEvent } from './events/comparable-unconsumed.event';
 import { ComparableTask } from './comparable.task';
 import { ComparableUpdatedEvent } from './events/comparable-updated.event';
+import { MovieApplication } from 'src/movie/movie.application';
 
 @Controller('comparable')
 export class ComparableController {
   constructor(
     private comparableApplication: ComparableApplication,
+    private movieApplication: MovieApplication,
     private comparableTask: ComparableTask,
   ) {}
 
+  // Movie specific APIs
+  // TODO: 이 API는 별도의 Controller로 분리하기 또는 comparable 공통 API 로 변경하기
+  @Get('movie/list')
+  async getMovieList(
+    @Query(
+      'genreIds',
+      new ParseArrayPipe({ items: Number, separator: ',', optional: true }),
+    )
+    genreIds?: number[],
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('pageSize', new ParseIntPipe({ optional: true })) pageSize?: number,
+    @Language() language?: LanguageISOCodes,
+  ) {
+    return await this.movieApplication.getList(
+      {
+        genreIds,
+        page,
+        pageSize,
+      },
+      language,
+    );
+  }
+
+  // Comparable common APIs
   @Get(':comparableType/keyword-search')
   async keywordSearch(
     @Param() comparableTypeDto: ComparableTypeDto,
@@ -104,7 +139,7 @@ export class ComparableController {
   async getConsumptionStatuses(
     @UserId() userId: number,
     @Param() comparableTypeDto: ComparableTypeDto,
-    @Body() comparableIdListDto: ComparableIdListDto,
+    @Body() comparableIdListDto: ComparableIdListDto, // TODO: get 사용하도록 수정
   ) {
     return await this.comparableApplication.getConsumptionStatuses(
       userId,
@@ -113,6 +148,8 @@ export class ComparableController {
     );
   }
 
+  // Event handlers
+  // TODO: 이벤트 핸들러는 별도의 Controller로 분리하기
   @EventPattern('comparable.updated')
   async comparableUpdated(@Payload() event: ComparableUpdatedEvent) {
     return await this.comparableTask.handleComparableUpdated(

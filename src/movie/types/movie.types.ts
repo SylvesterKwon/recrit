@@ -11,6 +11,12 @@ export type MovieRelations = {
   productionCompanyTmdbIds: number[];
 };
 
+export type MovieFilter = {
+  genreIds?: number[];
+  page?: number;
+  pageSize?: number;
+};
+
 export type MovieInformation = {
   id: number;
   tmdbId: number;
