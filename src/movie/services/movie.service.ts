@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { BaseComparableService } from 'src/comparable/services/base-comparable.service';
 import { Movie } from '../entities/movie.entity';
-import { MovieFilter, MovieInformation } from '../types/movie.types';
+import {
+  MovieFilter,
+  MovieInformation,
+  MovieSummaryForList,
+} from '../types/movie.types';
 import { MovieRepository } from '../repositories/movie.repository';
 import { TmdbUtilService } from 'src/tmdb/services/tmdb-util.service';
 import { LanguageISOCodes } from 'src/common/types/iso.types';
@@ -58,11 +62,45 @@ export class MovieService extends BaseComparableService<Movie> {
       },
     );
 
-    // TODO(TSK-78): Movie entity 그대로 내려주지 말고, 필요한 정보만 내려주도록 수정하기
-    // TODO(TSK-79): languageIsoCodes 가 주어진 경우, 번역된 정보를 내려주도록 수정하기
+    const movieSummaries = await Promise.all(
+      movies.map((movie) => this.getSummaryForList(movie, languageIsoCodes)),
+    );
     return {
       totalCount: totalCount,
-      results: movies,
+      results: movieSummaries,
+    };
+  }
+
+  private async getSummaryForList(
+    movie: Movie,
+    languageIsoCodes?: LanguageISOCodes,
+  ): Promise<MovieSummaryForList> {
+    await movie.genres.init();
+    const posterUrl = movie.posterPath
+      ? this.tmdbUtilService.getPosterUrl(movie.posterPath)
+      : undefined;
+
+    let movieTranslation = null;
+    if (languageIsoCodes) {
+      if (languageIsoCodes.iso31661) {
+        movieTranslation = await this.movieTranslationRepository.findOne({
+          movie: movie,
+          iso6391: languageIsoCodes?.iso6391,
+          iso31661: languageIsoCodes?.iso31661,
+        });
+      } else {
+        movieTranslation = await this.movieTranslationRepository.findOne({
+          movie: movie,
+          iso6391: languageIsoCodes?.iso6391,
+        });
+      }
+    }
+
+    return {
+      id: movie.id,
+      posterUrl: posterUrl,
+      releaseDate: movie.releaseDate,
+      title: movieTranslation?.title ? movieTranslation.title : movie.title,
     };
   }
 
@@ -81,7 +119,6 @@ export class MovieService extends BaseComparableService<Movie> {
 
     let movieTranslation = null;
     let movieGenreTranslations: MovieGenreTranslation[] | null = null;
-
     if (languageIsoCodes) {
       if (languageIsoCodes.iso31661) {
         movieTranslation = await this.movieTranslationRepository.findOne({
